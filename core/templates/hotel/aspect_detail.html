@@ -1,0 +1,270 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load custom_filters %}
+
+{% block title %}{{ aspect_display }} - {{ hotel.name }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <div class="row align-items-center mb-4">
+        <div class="col-md-8">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item">
+                        <a href="{% url 'core:hotel_dashboard' %}">Dashboard</a>
+                    </li>
+                    <li class="breadcrumb-item active" aria-current="page">
+                        {{ aspect_display }}
+                    </li>
+                </ol>
+            </nav>
+            <h1 class="display-6 fw-bold">
+                <i class="fas fa-tag text-primary me-2"></i>
+                {{ aspect_display }} Analysis
+            </h1>
+            <p class="text-muted">{{ hotel.name }} - {{ total_reviews }} reviews mentioning this aspect</p>
+        </div>
+        <div class="col-md-4 text-end">
+            <a href="{% url 'core:hotel_dashboard' %}" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left me-1"></i> Back to Dashboard
+            </a>
+        </div>
+    </div>
+    
+    <!-- Distribution Cards -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-3">
+            <div class="card bg-success text-white border-0">
+                <div class="card-body text-center">
+                    <h6 class="text-white-50">Positive</h6>
+                    <h2 class="mb-0">{{ distribution.positive }}</h2>
+                    <small>Reviews with positive sentiment</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-warning text-dark border-0">
+                <div class="card-body text-center">
+                    <h6 class="text-dark-50">Neutral</h6>
+                    <h2 class="mb-0">{{ distribution.neutral }}</h2>
+                    <small>Reviews with neutral sentiment</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-danger text-white border-0">
+                <div class="card-body text-center">
+                    <h6 class="text-white-50">Negative</h6>
+                    <h2 class="mb-0">{{ distribution.negative }}</h2>
+                    <small>Reviews with negative sentiment</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-primary text-white border-0">
+                <div class="card-body text-center">
+                    <h6 class="text-white-50">Total</h6>
+                    <h2 class="mb-0">{{ total_reviews }}</h2>
+                    <small>Total reviews mentioning {{ aspect_display }}</small>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Keyword Suggestions -->
+    <div class="card shadow-sm border-0 rounded-4 mb-4">
+        <div class="card-header bg-white border-0 py-3">
+            <h6 class="mb-0 fw-bold">
+                <i class="fas fa-key text-info me-2"></i>
+                Keywords Detected for {{ aspect_display }}
+            </h6>
+        </div>
+        <div class="card-body">
+            {% for keyword in keywords %}
+                <span class="badge bg-light text-dark border me-2 mb-2 p-2">
+                    <i class="fas fa-tag text-muted me-1"></i> {{ keyword }}
+                </span>
+            {% empty %}
+                <p class="text-muted mb-0">No keywords defined for this aspect.</p>
+            {% endfor %}
+        </div>
+    </div>
+    
+    <!-- Reviews Table -->
+    <div class="card shadow-sm border-0 rounded-4">
+        <div class="card-header bg-white border-0 py-3 d-flex justify-content-between align-items-center">
+            <div>
+                <h5 class="mb-0 fw-bold">
+                    <i class="fas fa-table text-secondary me-2"></i>
+                    Recent Reviews
+                </h5>
+                <small class="text-muted">Reviews that mention {{ aspect_display }}</small>
+            </div>
+            <span class="badge bg-primary">{{ total_reviews }} total</span>
+        </div>
+        <div class="card-body">
+            {% if reviews %}
+                <div class="table-responsive">
+                    <table class="table table-hover table-striped">
+                        <thead class="table-dark">
+                            <tr>
+                                <th style="width: 5%;">#</th>
+                                <th style="width: 35%;">Review</th>
+                                <th style="width: 15%;">Rating</th>
+                                <th style="width: 20%;">Sentiment</th>
+                                <th style="width: 15%;">Platform</th>
+                                <th style="width: 10%;">Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for review in reviews %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>
+                                        <div class="review-text">
+                                            {{ review.review_text|truncatechars:150 }}
+                                            {% if review.review_text|length > 150 %}
+                                                <span class="text-muted">...</span>
+                                            {% endif %}
+                                        </div>
+                                        <small class="text-muted">
+                                            <i class="fas fa-robot me-1"></i>
+                                            Confidence: {{ review.confidence_score|floatformat:2 }}
+                                        </small>
+                                    </td>
+                                    <td>
+                                        <span class="text-warning">
+                                            {% for i in "12345"|make_list %}
+                                                {% if forloop.counter <= review.rating|add:0 %}
+                                                    <i class="fas fa-star"></i>
+                                                {% else %}
+                                                    <i class="far fa-star"></i>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </span>
+                                        <br>
+                                        <small>{{ review.rating }}/5</small>
+                                    </td>
+                                    <td>
+                                        <!-- Overall Sentiment -->
+                                        <span class="badge bg-{% if review.sentiment_overall == 'positive' %}success{% elif review.sentiment_overall == 'negative' %}danger{% else %}warning{% endif %}">
+                                            <i class="fas fa-{% if review.sentiment_overall == 'positive' %}smile{% elif review.sentiment_overall == 'negative' %}frown{% else %}meh{% endif %} me-1"></i>
+                                            {{ review.sentiment_overall|default:'neutral'|title }}
+                                        </span>
+                                        
+                                        <!-- Aspect Sentiment -->
+                                        {% with field_name="sentiment_"|add:aspect %}
+                                            {% with aspect_sentiment=review|get_field_value:field_name %}
+                                                {% if aspect_sentiment %}
+                                                    <br>
+                                                    <small class="text-muted">
+                                                        <i class="fas fa-tag me-1"></i>
+                                                        <span class="badge bg-{% if aspect_sentiment == 'positive' %}success{% elif aspect_sentiment == 'negative' %}danger{% else %}warning{% endif %}">
+                                                            {{ aspect_sentiment|title }}
+                                                        </span>
+                                                    </small>
+                                                {% else %}
+                                                    <br>
+                                                    <small class="text-muted">
+                                                        <i class="fas fa-minus-circle me-1"></i>
+                                                        Not mentioned
+                                                    </small>
+                                                {% endif %}
+                                            {% endwith %}
+                                        {% endwith %}
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-secondary">
+                                            {{ review.get_platform_display }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <small>{{ review.review_date|date:"M d, Y" }}</small>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Pagination -->
+                {% if reviews.has_other_pages %}
+                    <nav aria-label="Reviews pagination" class="mt-4">
+                        <ul class="pagination justify-content-center">
+                            {% if reviews.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ reviews.previous_page_number }}">
+                                        <i class="fas fa-chevron-left"></i>
+                                    </a>
+                                </li>
+                            {% else %}
+                                <li class="page-item disabled">
+                                    <span class="page-link"><i class="fas fa-chevron-left"></i></span>
+                                </li>
+                            {% endif %}
+                            
+                            {% for num in reviews.paginator.page_range %}
+                                {% if reviews.number == num %}
+                                    <li class="page-item active">
+                                        <span class="page-link">{{ num }}</span>
+                                    </li>
+                                {% elif num > reviews.number|add:'-3' and num < reviews.number|add:'3' %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+                            
+                            {% if reviews.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ reviews.next_page_number }}">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </a>
+                                </li>
+                            {% else %}
+                                <li class="page-item disabled">
+                                    <span class="page-link"><i class="fas fa-chevron-right"></i></span>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                {% endif %}
+            {% else %}
+                <div class="text-center py-4">
+                    <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                    <p class="mb-0">No reviews mentioning {{ aspect_display }}</p>
+                    <small class="text-muted">Reviews will appear here once guests mention this aspect</small>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+    .table-striped tbody tr:nth-of-type(odd) {
+        background-color: rgba(0,0,0,0.02);
+    }
+    .table-hover tbody tr:hover {
+        background-color: rgba(13, 110, 253, 0.05);
+    }
+    .review-text {
+        font-size: 0.95rem;
+        line-height: 1.4;
+    }
+    .badge {
+        font-weight: 500;
+        padding: 5px 12px;
+    }
+    .table th {
+        font-weight: 600;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    .table td {
+        vertical-align: middle;
+        padding: 12px 10px;
+    }
+</style>
+{% endblock %}

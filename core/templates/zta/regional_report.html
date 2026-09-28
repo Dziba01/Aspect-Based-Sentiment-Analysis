@@ -1,0 +1,299 @@
+{% extends 'base.html' %}
+{% load custom_filters %}
+{% load static %}
+
+{% block title %}ZTA Regional Report{% endblock %}
+
+{% block extra_css %}
+<style>
+    .regional-wrapper { padding: 0; }
+    
+    .regional-header {
+        background: linear-gradient(135deg, #0f172a, #1e293b);
+        border-radius: 16px;
+        padding: 1.5rem 2rem;
+        margin-bottom: 1.5rem;
+        color: #ffffff;
+    }
+    .regional-header h1 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .regional-header .sub {
+        color: rgba(255,255,255,0.5);
+        font-size: 0.9rem;
+    }
+    .regional-header .btn-primary {
+        background: #ffffff;
+        color: #0f172a;
+        border: none;
+        border-radius: 10px;
+        padding: 0.6rem 1.5rem;
+        font-weight: 600;
+    }
+    .regional-header .btn-primary:hover {
+        background: #f1f5f9;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+    
+    .region-selector {
+        background: #ffffff;
+        border-radius: 14px;
+        padding: 1rem 1.5rem;
+        border: 1px solid #eef2f6;
+        margin-bottom: 1.5rem;
+    }
+    .region-selector .btn-group-custom {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 4px;
+    }
+    .region-selector .btn-group-custom .btn {
+        border-radius: 8px;
+        font-weight: 500;
+        font-size: 0.85rem;
+        padding: 4px 16px;
+    }
+    .region-selector .btn-group-custom .btn-outline-primary {
+        border-color: #e2e8f0;
+        color: #475569;
+    }
+    .region-selector .btn-group-custom .btn-outline-primary:hover {
+        border-color: #3b82f6;
+        color: #3b82f6;
+        background: #eff6ff;
+    }
+    .region-selector .btn-group-custom .btn-primary {
+        background: #3b82f6;
+        border-color: #3b82f6;
+    }
+    
+    .stat-grid-regional {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.2rem;
+        margin-bottom: 1.5rem;
+    }
+    @media (max-width: 768px) {
+        .stat-grid-regional { grid-template-columns: 1fr; }
+    }
+    
+    .stat-regional-card {
+        background: #ffffff;
+        border-radius: 14px;
+        padding: 1.2rem 1.5rem;
+        border: 1px solid #eef2f6;
+        text-align: center;
+    }
+    .stat-regional-card .stat-label {
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: #94a3b8;
+        font-weight: 600;
+    }
+    .stat-regional-card .stat-number {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #0f172a;
+    }
+    .stat-regional-card .stat-icon {
+        font-size: 1.5rem;
+        margin-bottom: 4px;
+    }
+    
+    .hotel-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.9rem;
+    }
+    .hotel-table th {
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+        color: #94a3b8;
+        padding: 8px 10px;
+        border-bottom: 2px solid #e2e8f0;
+        text-align: left;
+        font-weight: 600;
+    }
+    .hotel-table td {
+        padding: 8px 10px;
+        border-bottom: 1px solid #f1f5f9;
+        vertical-align: middle;
+    }
+    .hotel-table tr:hover td {
+        background: #f8fafc;
+    }
+    .hotel-table .sentiment-badge-sm {
+        font-size: 0.65rem;
+        font-weight: 600;
+        padding: 1px 10px;
+        border-radius: 12px;
+    }
+    .hotel-table .sentiment-badge-sm.pos { background: #dcfce7; color: #16a34a; }
+    .hotel-table .sentiment-badge-sm.neu { background: #fef9c3; color: #ca8a04; }
+    .hotel-table .sentiment-badge-sm.neg { background: #fee2e2; color: #dc2626; }
+    
+    @media (max-width: 768px) {
+        .regional-header { padding: 1.2rem; }
+        .regional-header h1 { font-size: 1.2rem; }
+        .stat-regional-card .stat-number { font-size: 1.5rem; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="regional-wrapper">
+
+    <!-- Header -->
+    <div class="regional-header">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h1>
+                    <i class="fas fa-file-pdf text-danger"></i>
+                    ZTA Regional Report
+                    <span class="sub">
+                        {% if region %}
+                            — {{ region.name }} Region
+                        {% else %}
+                            — National Report
+                        {% endif %}
+                    </span>
+                </h1>
+            </div>
+            <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                <form method="POST">
+                    {% csrf_token %}
+                    <button type="submit" name="generate_report" class="btn btn-primary">
+                        <i class="fas fa-file-pdf me-1"></i> Generate PDF
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Region Selector -->
+    <div class="region-selector">
+        <div class="row align-items-center">
+            <div class="col-md-2">
+                <span class="fw-semibold">Select Region:</span>
+            </div>
+            <div class="col-md-10">
+                <div class="btn-group-custom">
+                    <a href="{% url 'core:zta_regional_report' %}" 
+                       class="btn {% if not region %}btn-primary{% else %}btn-outline-primary{% endif %}">
+                        🇿🇼 National
+                    </a>
+                    {% for r in regions %}
+                        <a href="{% url 'core:zta_regional_report_region' r.id %}" 
+                           class="btn {% if region and region.id == r.id %}btn-primary{% else %}btn-outline-primary{% endif %}">
+                            {{ r.name }}
+                        </a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics -->
+    <div class="stat-grid-regional">
+        <div class="stat-regional-card">
+            <div class="stat-icon">🏨</div>
+            <div class="stat-label">Hotels</div>
+            <div class="stat-number">{{ hotels.count }}</div>
+        </div>
+        <div class="stat-regional-card">
+            <div class="stat-icon">💬</div>
+            <div class="stat-label">Total Reviews</div>
+            <div class="stat-number">{{ hotels|sum_reviews|default:0 }}</div>
+        </div>
+        <div class="stat-regional-card">
+            <div class="stat-icon">⭐</div>
+            <div class="stat-label">Avg Rating</div>
+            <div class="stat-number">{{ hotels|avg_rating|default:0|floatformat:1 }}</div>
+        </div>
+    </div>
+
+    <!-- Hotel List -->
+    <div class="section-card">
+        <div class="card-head">
+            <h5>
+                <i class="fas fa-list"></i>
+                Hotels in {% if region %}{{ region.name }}{% else %}Zimbabwe{% endif %}
+                <span class="sub">{{ hotels.count }} hotels</span>
+            </h5>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="hotel-table">
+                    <thead>
+                        <tr>
+                            <th>Hotel</th>
+                            <th>Type</th>
+                            <th style="text-align:center;">Reviews</th>
+                            <th style="text-align:center;">Rating</th>
+                            <th style="text-align:center;">Sentiment</th>
+                            <th style="text-align:center;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for hotel in hotels %}
+                            <tr>
+                                <td>
+                                    <a href="{% url 'core:zta_hotel_detail' hotel.id %}" class="fw-semibold text-decoration-none">
+                                        {{ hotel.name }}
+                                    </a>
+                                </td>
+                                <td><span class="text-muted">{{ hotel.get_hotel_type_display }}</span></td>
+                                <td style="text-align:center;">{{ hotel.get_total_reviews }}</td>
+                                <td style="text-align:center;">
+                                    <span class="text-warning">⭐</span>
+                                    {{ hotel.get_average_rating|floatformat:1 }}
+                                </td>
+                                <td style="text-align:center;">
+                                    {% with dist=hotel.get_sentiment_distribution %}
+                                        {% with positive=dist.positive|default:0 %}
+                                        {% with neutral=dist.neutral|default:0 %}
+                                        {% with negative=dist.negative|default:0 %}
+                                            {% with total=positive|add:neutral|add:negative %}
+                                                {% if total > 0 %}
+                                                    <span class="sentiment-badge-sm pos">👍 {{ positive }}</span>
+                                                    <span class="sentiment-badge-sm neu">😐 {{ neutral }}</span>
+                                                    <span class="sentiment-badge-sm neg">👎 {{ negative }}</span>
+                                                {% else %}
+                                                    <span class="text-muted">No Data</span>
+                                                {% endif %}
+                                            {% endwith %}
+                                        {% endwith %}
+                                        {% endwith %}
+                                        {% endwith %}
+                                    {% endwith %}
+                                </td>
+                                <td style="text-align:center;">
+                                    <a href="{% url 'core:zta_hotel_detail' hotel.id %}" 
+                                       class="btn btn-sm btn-outline-primary rounded-8">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="6" class="text-center py-4 text-muted">
+                                    <i class="fas fa-inbox me-2"></i> No hotels found in this region
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

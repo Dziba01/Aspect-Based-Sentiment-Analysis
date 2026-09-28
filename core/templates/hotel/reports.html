@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Reports - {{ hotel.name }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <div class="row align-items-center mb-4">
+        <div class="col-md-8">
+            <h1 class="display-6 fw-bold">
+                <i class="fas fa-file-pdf text-danger me-2"></i>
+                Weekly Reports
+            </h1>
+            <p class="text-muted">{{ hotel.name }} - Automated sentiment reports</p>
+        </div>
+        <div class="col-md-4 text-end">
+            <form method="POST" class="d-inline">
+                {% csrf_token %}
+                <button type="submit" name="generate_report" class="btn btn-primary">
+                    <i class="fas fa-plus-circle me-1"></i> Generate New Report
+                </button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Generate Report Info -->
+    <div class="alert alert-info">
+        <i class="fas fa-info-circle me-2"></i>
+        Reports are generated weekly (Monday-Sunday) and include:
+        <ul class="mb-0 mt-2">
+            <li>Overall sentiment distribution</li>
+            <li>Aspect-based sentiment analysis for all 7 service aspects</li>
+            <li>Top service gaps identified from negative reviews</li>
+            <li>Sample of recent reviews with sentiment labels</li>
+        </ul>
+    </div>
+    
+    <!-- Reports List -->
+    <div class="card shadow-sm border-0 rounded-4">
+        <div class="card-header bg-white border-0 py-3">
+            <h5 class="mb-0 fw-bold">
+                <i class="fas fa-list me-2"></i>
+                Generated Reports
+            </h5>
+        </div>
+        <div class="card-body">
+            {% if reports %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Report Period</th>
+                                <th>Total Reviews</th>
+                                <th>Avg Rating</th>
+                                <th>Sentiment</th>
+                                <th>Email Sent</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for report in reports %}
+                                <tr>
+                                    <td>
+                                        <strong>{{ report.week_start|date:"M d, Y" }}</strong>
+                                        <br>
+                                        <small class="text-muted">to {{ report.week_end|date:"M d, Y" }}</small>
+                                    </td>
+                                    <td>{{ report.total_reviews }}</td>
+                                    <td>{{ report.average_rating|floatformat:2 }}</td>
+                                    <td>
+                                        <div class="d-flex gap-1">
+                                            <span class="badge bg-success">{{ report.positive_count }} P</span>
+                                            <span class="badge bg-warning">{{ report.neutral_count }} N</span>
+                                            <span class="badge bg-danger">{{ report.negative_count }} Ne</span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        {% if report.email_sent %}
+                                            <span class="badge bg-success">
+                                                <i class="fas fa-check-circle"></i> Sent
+                                            </span>
+                                        {% else %}
+                                            <span class="badge bg-secondary">
+                                                <i class="fas fa-clock"></i> Pending
+                                            </span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if report.report_file %}
+                                            <a href="{% url 'core:download_report' report.id %}" 
+                                               class="btn btn-sm btn-outline-primary">
+                                                <i class="fas fa-download"></i> Download PDF
+                                            </a>
+                                        {% else %}
+                                            <span class="text-muted">No file</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-file-pdf fa-4x text-muted mb-3"></i>
+                    <h5 class="text-muted">No reports generated yet</h5>
+                    <p class="text-muted">Click "Generate New Report" to create your first weekly report</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

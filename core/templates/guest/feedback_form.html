@@ -1,0 +1,563 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Share Your Experience{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* ============================================
+       PREMIUM FEEDBACK PAGE - PROFESSIONAL
+       ============================================ */
+    
+    .feedback-wrapper {
+        max-width: 820px;
+        margin: 0 auto;
+        padding: 0.5rem 0;
+    }
+    
+    /* Hotel Header - Premium */
+    .hotel-header-premium {
+        background: linear-gradient(135deg, #1a5276 0%, #1a8a4a 100%);
+        border-radius: 16px 16px 0 0;
+        padding: 2rem 2.5rem;
+        color: #ffffff;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .hotel-header-premium::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -10%;
+        width: 300px;
+        height: 300px;
+        background: rgba(255,255,255,0.04);
+        border-radius: 50%;
+    }
+    
+    .hotel-header-premium .hotel-icon-large {
+        font-size: 2.5rem;
+        margin-bottom: 0.3rem;
+        display: block;
+    }
+    
+    .hotel-header-premium h2 {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin: 0;
+        letter-spacing: -0.5px;
+    }
+    
+    .hotel-header-premium .hotel-sub {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.2rem;
+        margin-top: 0.3rem;
+        color: rgba(255,255,255,0.7);
+        font-size: 0.9rem;
+    }
+    
+    .hotel-header-premium .hotel-sub i {
+        margin-right: 4px;
+    }
+    
+    .hotel-header-premium .hotel-sub .badge-premium {
+        background: rgba(255,255,255,0.15);
+        padding: 2px 14px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        color: #7dcea0;
+    }
+    
+    .hotel-header-premium .rating-display {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-top: 0.8rem;
+    }
+    
+    .hotel-header-premium .rating-display .stars-large {
+        color: #fbbf24;
+        font-size: 1.2rem;
+        letter-spacing: 2px;
+    }
+    
+    .hotel-header-premium .rating-display .rating-number {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #ffffff;
+    }
+    
+    .hotel-header-premium .rating-display .review-count {
+        font-size: 0.8rem;
+        color: rgba(255,255,255,0.5);
+    }
+    
+    /* Form Card - Premium */
+    .feedback-card-premium {
+        background: #ffffff;
+        border-radius: 0 0 16px 16px;
+        box-shadow: 0 8px 40px rgba(0,0,0,0.06);
+        border: 1px solid #eef2f6;
+        border-top: none;
+        padding: 2rem 2.5rem;
+    }
+    
+    .feedback-card-premium .form-section {
+        margin-bottom: 1.8rem;
+    }
+    
+    .feedback-card-premium .form-section:last-child {
+        margin-bottom: 0;
+    }
+    
+    .feedback-card-premium .section-label {
+        font-weight: 600;
+        font-size: 0.85rem;
+        color: #0f172a;
+        margin-bottom: 0.3rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .feedback-card-premium .section-label .label-icon {
+        color: #1a8a4a;
+    }
+    
+    .feedback-card-premium .section-hint {
+        font-size: 0.8rem;
+        color: #94a3b8;
+        margin-bottom: 0.6rem;
+    }
+    
+    .feedback-card-premium .form-control-premium {
+        width: 100%;
+        border-radius: 12px;
+        border: 1.5px solid #eef2f6;
+        padding: 0.9rem 1.2rem;
+        font-size: 0.95rem;
+        transition: all 0.3s;
+        background: #fafbfc;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    
+    .feedback-card-premium .form-control-premium:focus {
+        border-color: #1a8a4a;
+        background: #ffffff;
+        box-shadow: 0 0 0 4px rgba(26, 138, 74, 0.06);
+        outline: none;
+    }
+    
+    .feedback-card-premium .form-control-premium::placeholder {
+        color: #aab4c0;
+    }
+    
+    .feedback-card-premium textarea.form-control-premium {
+        min-height: 140px;
+        resize: vertical;
+        line-height: 1.6;
+    }
+    
+    /* Quick Reply Buttons - Premium */
+    .quick-replies {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-bottom: 0.8rem;
+    }
+    
+    .quick-replies .quick-btn {
+        background: #f8fafc;
+        border: 1px solid #eef2f6;
+        border-radius: 20px;
+        padding: 0.4rem 1.2rem;
+        font-size: 0.75rem;
+        color: #475569;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-family: 'Inter', sans-serif;
+    }
+    
+    .quick-replies .quick-btn:hover {
+        background: #e8f5e9;
+        border-color: #1a8a4a;
+        color: #1a8a4a;
+        transform: translateY(-1px);
+    }
+    
+    .quick-replies .quick-btn i {
+        margin-right: 4px;
+        font-size: 0.7rem;
+    }
+    
+    /* Consent - Premium */
+    .consent-premium {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 1rem 1.2rem;
+        background: #f8fafc;
+        border-radius: 12px;
+        border: 1px solid #eef2f6;
+        transition: all 0.2s;
+    }
+    
+    .consent-premium:hover {
+        background: #f1f5f9;
+        border-color: #d1d9e6;
+    }
+    
+    .consent-premium input[type="checkbox"] {
+        margin-top: 2px;
+        width: 18px;
+        height: 18px;
+        accent-color: #1a8a4a;
+        flex-shrink: 0;
+        cursor: pointer;
+    }
+    
+    .consent-premium label {
+        font-size: 0.85rem;
+        color: #334155;
+        cursor: pointer;
+        font-weight: 400;
+        line-height: 1.5;
+    }
+    
+    .consent-premium label .highlight-text {
+        color: #1a5276;
+        font-weight: 500;
+    }
+    
+    .consent-premium label .check-icon {
+        color: #1a8a4a;
+        margin-right: 4px;
+    }
+    
+    /* Submit Button - Premium */
+    .btn-submit-premium {
+        background: linear-gradient(135deg, #1a8a4a 0%, #1a6e3a 100%);
+        border: none;
+        border-radius: 12px;
+        padding: 0.9rem 2rem;
+        font-weight: 600;
+        font-size: 1rem;
+        width: 100%;
+        color: #ffffff;
+        transition: all 0.3s;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        font-family: 'Inter', sans-serif;
+        letter-spacing: 0.3px;
+    }
+    
+    .btn-submit-premium:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 30px rgba(26, 138, 74, 0.25);
+        background: linear-gradient(135deg, #1a6e3a 0%, #1a5a2e 100%);
+    }
+    
+    .btn-submit-premium:active {
+        transform: translateY(0);
+    }
+    
+    .btn-submit-premium i {
+        font-size: 1rem;
+    }
+    
+    /* Security Footer - Premium */
+    .security-footer {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 1.5rem;
+        margin-top: 1.5rem;
+        padding-top: 1.2rem;
+        border-top: 1px solid #eef2f6;
+        flex-wrap: wrap;
+    }
+    
+    .security-footer .security-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 0.75rem;
+        color: #94a3b8;
+    }
+    
+    .security-footer .security-item i {
+        color: #1a8a4a;
+        font-size: 0.85rem;
+    }
+    
+    .security-footer .security-item .text-highlight {
+        color: #1a5276;
+        font-weight: 500;
+    }
+    
+    /* No Hotel State - Premium */
+    .no-hotel-premium {
+        text-align: center;
+        padding: 3rem 2rem;
+    }
+    
+    .no-hotel-premium .icon-circle {
+        width: 80px;
+        height: 80px;
+        background: #e8f5e9;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1rem;
+        font-size: 2.5rem;
+        color: #1a8a4a;
+    }
+    
+    .no-hotel-premium h4 {
+        font-weight: 600;
+        color: #0f172a;
+        margin: 0;
+    }
+    
+    .no-hotel-premium p {
+        color: #94a3b8;
+        font-size: 0.9rem;
+        margin: 0.3rem 0 1rem 0;
+    }
+    
+    .no-hotel-premium .btn-outline-premium {
+        border: 2px solid #1a8a4a;
+        color: #1a8a4a;
+        background: transparent;
+        border-radius: 10px;
+        padding: 0.6rem 2rem;
+        font-weight: 600;
+        font-size: 0.85rem;
+        transition: all 0.2s;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .no-hotel-premium .btn-outline-premium:hover {
+        background: #1a8a4a;
+        color: #ffffff;
+        transform: translateY(-2px);
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+        .hotel-header-premium {
+            padding: 1.5rem 1.2rem;
+        }
+        .hotel-header-premium h2 {
+            font-size: 1.3rem;
+        }
+        .feedback-card-premium {
+            padding: 1.2rem 1.2rem;
+        }
+        .hotel-header-premium .hotel-sub {
+            gap: 0.8rem;
+            font-size: 0.8rem;
+        }
+        .security-footer {
+            gap: 0.8rem;
+        }
+        .quick-replies .quick-btn {
+            font-size: 0.7rem;
+            padding: 0.3rem 0.8rem;
+        }
+    }
+    
+    @media (max-width: 576px) {
+        .hotel-header-premium {
+            padding: 1.2rem 1rem;
+        }
+        .hotel-header-premium h2 {
+            font-size: 1.1rem;
+        }
+        .feedback-card-premium {
+            padding: 1rem;
+        }
+        .feedback-card-premium .form-control-premium {
+            padding: 0.7rem 0.9rem;
+            font-size: 0.9rem;
+        }
+        .consent-premium {
+            padding: 0.8rem 1rem;
+        }
+        .consent-premium label {
+            font-size: 0.8rem;
+        }
+        .btn-submit-premium {
+            padding: 0.75rem 1.5rem;
+            font-size: 0.9rem;
+        }
+        .hotel-header-premium .rating-display .stars-large {
+            font-size: 1rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="feedback-wrapper">
+
+    {% if hotel %}
+        <!-- ============================================ -->
+        <!-- HOTEL HEADER - PREMIUM -->
+        <!-- ============================================ -->
+        <div class="hotel-header-premium">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <span class="hotel-icon-large">🏨</span>
+                    <h2>{{ hotel.name }}</h2>
+                    <div class="hotel-sub">
+                        <span><i class="fas fa-map-marker-alt"></i> {{ hotel.region.name }}</span>
+                        <span><i class="fas fa-tag"></i> {{ hotel.get_hotel_type_display }}</span>
+                        <span class="badge-premium">
+                            <i class="fas fa-check-circle"></i> Verified
+                        </span>
+                    </div>
+                    <div class="rating-display">
+                        <span class="stars-large">
+                            {% for i in "12345"|make_list %}
+                                {% if forloop.counter <= hotel.get_average_rating %}
+                                    <i class="fas fa-star"></i>
+                                {% else %}
+                                    <i class="far fa-star"></i>
+                                {% endif %}
+                            {% endfor %}
+                        </span>
+                        <span class="rating-number">{{ hotel.get_average_rating|floatformat:1 }}</span>
+                        <span class="review-count">({{ hotel.get_total_reviews }} reviews)</span>
+                    </div>
+                </div>
+                <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                    <div style="color: rgba(255,255,255,0.4); font-size: 0.7rem; letter-spacing: 0.5px;">
+                        <i class="fas fa-qrcode"></i> SCAN TO REVIEW
+                    </div>
+                    <div style="color: rgba(255,255,255,0.15); font-size: 0.8rem; margin-top: 2px;">
+                        Share your honest experience
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- FEEDBACK FORM - PREMIUM -->
+        <!-- ============================================ -->
+        <div class="feedback-card-premium">
+            <form method="POST" action="{% url 'core:guest_feedback_hotel' hotel.slug %}">
+                {% csrf_token %}
+
+                <!-- Quick Reply Buttons -->
+                <div class="form-section">
+                    <div class="section-label">
+                        <span class="label-icon"><i class="fas fa-bolt"></i></span>
+                        Quick Feedback
+                    </div>
+                    <div class="quick-replies">
+                        <button type="button" class="quick-btn" onclick="setFeedback('Excellent service! The staff were very friendly and helpful.')">
+                            <i class="fas fa-smile"></i> Excellent
+                        </button>
+                        <button type="button" class="quick-btn" onclick="setFeedback('Good value for money. Clean and comfortable room.')">
+                            <i class="fas fa-thumbs-up"></i> Good
+                        </button>
+                        <button type="button" class="quick-btn" onclick="setFeedback('The room was clean but the service could be improved.')">
+                            <i class="fas fa-meh"></i> Average
+                        </button>
+                        <button type="button" class="quick-btn" onclick="setFeedback('Very disappointed. The room was not clean and staff were rude.')">
+                            <i class="fas fa-frown"></i> Poor
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Feedback Text -->
+                <div class="form-section">
+                    <div class="section-label">
+                        <span class="label-icon"><i class="fas fa-pen"></i></span>
+                        Share Your Experience
+                    </div>
+                    <div class="section-hint">
+                        Tell us what you liked or what could be improved.
+                    </div>
+                    <textarea name="review_text" id="id_review_text" 
+                              class="form-control-premium" rows="5" 
+                              placeholder="Write your honest review here..."></textarea>
+                </div>
+
+                <!-- Consent -->
+                <div class="form-section">
+                    <div class="consent-premium">
+                        <input type="checkbox" name="consent" id="id_consent" required>
+                        <label for="id_consent">
+                            <span class="check-icon"><i class="fas fa-shield-alt"></i></span>
+                            I consent to my feedback being used for service improvement.
+                            <span class="highlight-text">My identity will remain anonymous.</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Submit -->
+                <div class="form-section">
+                    <button type="submit" class="btn-submit-premium">
+                        <i class="fas fa-paper-plane"></i> Submit Feedback
+                    </button>
+                </div>
+            </form>
+
+            <!-- Security Footer -->
+            <div class="security-footer">
+                <span class="security-item">
+                    <i class="fas fa-lock"></i> Encrypted
+                </span>
+                <span class="security-item">
+                    <i class="fas fa-user-secret"></i> Anonymous
+                </span>
+                <span class="security-item">
+                    <i class="fas fa-clock"></i> Takes 2 minutes
+                </span>
+                <span class="security-item">
+                    <i class="fas fa-check-circle"></i> <span class="text-highlight">Trusted by 50+ hotels</span>
+                </span>
+            </div>
+        </div>
+
+    {% else %}
+        <!-- ============================================ -->
+        <!-- NO HOTEL SELECTED - PREMIUM -->
+        <!-- ============================================ -->
+        <div class="feedback-card-premium" style="border-radius: 16px; border-top: 1px solid #eef2f6;">
+            <div class="no-hotel-premium">
+                <div class="icon-circle">
+                    <i class="fas fa-qrcode"></i>
+                </div>
+                <h4>Scan QR Code</h4>
+                <p>Please scan the QR code at your hotel to leave feedback.</p>
+                <a href="{% url 'core:home' %}" class="btn-outline-premium">
+                    <i class="fas fa-arrow-left"></i> Back to Home
+                </a>
+            </div>
+        </div>
+    {% endif %}
+
+</div>
+
+{% block extra_js %}
+<script>
+    function setFeedback(text) {
+        document.getElementById('id_review_text').value = text;
+        document.getElementById('id_review_text').focus();
+        document.getElementById('id_review_text').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+</script>
+{% endblock %}
+{% endblock %}

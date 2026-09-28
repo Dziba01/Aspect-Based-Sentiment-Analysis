@@ -1,0 +1,655 @@
+/* ============================================
+   PROFESSIONAL DASHBOARD CSS - COMPLETE REDESIGN
+   ============================================ */
+
+/* ----- Global Reset ----- */
+.dashboard-wrapper {
+    background: #f0f2f6;
+    min-height: 100vh;
+    padding: 0;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* ----- Hotel Hero Header ----- */
+.hotel-hero {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+    padding: 2.5rem 3rem;
+    margin-bottom: 2rem;
+    border-radius: 0 0 24px 24px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    position: relative;
+    overflow: hidden;
+}
+
+.hotel-hero::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -10%;
+    width: 400px;
+    height: 400px;
+    background: rgba(59, 130, 246, 0.08);
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+.hotel-hero::after {
+    content: '';
+    position: absolute;
+    bottom: -30%;
+    left: 20%;
+    width: 300px;
+    height: 300px;
+    background: rgba(34, 197, 94, 0.05);
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+.hotel-hero .hero-content {
+    position: relative;
+    z-index: 1;
+}
+
+.hotel-hero .breadcrumb-custom {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.8rem;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+}
+
+.hotel-hero .breadcrumb-custom a {
+    color: rgba(255, 255, 255, 0.6);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.hotel-hero .breadcrumb-custom a:hover {
+    color: #ffffff;
+}
+
+.hotel-hero h1 {
+    color: #ffffff;
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.hotel-hero h1 .hotel-icon {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 10px;
+    border-radius: 12px;
+    font-size: 1.4rem;
+}
+
+.hotel-hero .hotel-stats-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    margin-top: 1rem;
+}
+
+.hotel-hero .hotel-stat-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.95rem;
+}
+
+.hotel-hero .hotel-stat-item i {
+    color: rgba(255, 255, 255, 0.4);
+    width: 20px;
+}
+
+.hotel-hero .hotel-stat-item .highlight {
+    color: #fbbf24;
+    font-weight: 600;
+}
+
+.hotel-hero .hotel-stat-item .badge-type {
+    background: rgba(255, 255, 255, 0.12);
+    padding: 3px 14px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #ffffff;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.hotel-hero .hero-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 1rem;
+}
+
+.hotel-hero .hero-actions .btn {
+    border-radius: 10px;
+    padding: 8px 20px;
+    font-weight: 500;
+    font-size: 0.9rem;
+    transition: all 0.3s;
+}
+
+.hotel-hero .hero-actions .btn-outline-light {
+    border-color: rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+}
+
+.hotel-hero .hero-actions .btn-outline-light:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.4);
+}
+
+.hotel-hero .hero-actions .btn-light {
+    background: #ffffff;
+    color: #0f172a;
+}
+
+.hotel-hero .hero-actions .btn-light:hover {
+    background: #f1f5f9;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* ----- Stat Cards Grid ----- */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+@media (max-width: 992px) {
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 576px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.stat-card-modern {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 1.5rem 1.8rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+    border: 1px solid rgba(0, 0, 0, 0.04);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-card-modern:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+}
+
+.stat-card-modern .stat-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.stat-card-modern .stat-icon-wrapper {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+}
+
+.stat-card-modern .stat-icon-wrapper.blue { background: #eff6ff; color: #3b82f6; }
+.stat-card-modern .stat-icon-wrapper.green { background: #f0fdf4; color: #22c55e; }
+.stat-card-modern .stat-icon-wrapper.yellow { background: #fffbeb; color: #eab308; }
+.stat-card-modern .stat-icon-wrapper.red { background: #fef2f2; color: #ef4444; }
+.stat-card-modern .stat-icon-wrapper.purple { background: #f5f3ff; color: #8b5cf6; }
+
+.stat-card-modern .stat-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #94a3b8;
+    margin-bottom: 2px;
+}
+
+.stat-card-modern .stat-number {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: #0f172a;
+    line-height: 1.2;
+}
+
+.stat-card-modern .stat-sub {
+    font-size: 0.8rem;
+    color: #94a3b8;
+    margin-top: 2px;
+}
+
+.stat-card-modern .stat-progress {
+    margin-top: 10px;
+    height: 4px;
+    border-radius: 2px;
+    background: #f1f5f9;
+    overflow: hidden;
+}
+
+.stat-card-modern .stat-progress .bar {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 1s ease;
+}
+
+.stat-card-modern .stat-progress .bar.blue { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+.stat-card-modern .stat-progress .bar.green { background: linear-gradient(90deg, #22c55e, #4ade80); }
+.stat-card-modern .stat-progress .bar.yellow { background: linear-gradient(90deg, #eab308, #facc15); }
+.stat-card-modern .stat-progress .bar.red { background: linear-gradient(90deg, #ef4444, #f87171); }
+
+/* ----- Two Column Layout ----- */
+.two-col-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+@media (max-width: 992px) {
+    .two-col-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ----- Modern Cards ----- */
+.card-modern {
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+    border: 1px solid rgba(0, 0, 0, 0.04);
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.card-modern:hover {
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+}
+
+.card-modern .card-header-modern {
+    padding: 1.2rem 1.8rem;
+    border-bottom: 1px solid #f1f5f9;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.card-modern .card-header-modern h5 {
+    font-weight: 600;
+    font-size: 1rem;
+    color: #0f172a;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.card-modern .card-header-modern .subtitle {
+    font-size: 0.75rem;
+    color: #94a3b8;
+    font-weight: 400;
+}
+
+.card-modern .card-body-modern {
+    padding: 1.5rem 1.8rem;
+}
+
+/* ----- Service Gaps ----- */
+.gap-item-modern {
+    background: #f8fafc;
+    border-radius: 10px;
+    padding: 1rem 1.2rem;
+    margin-bottom: 0.75rem;
+    border-left: 4px solid #ef4444;
+    transition: all 0.2s ease;
+}
+
+.gap-item-modern:hover {
+    background: #f1f5f9;
+}
+
+.gap-item-modern .gap-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.gap-item-modern .gap-name {
+    font-weight: 600;
+    color: #0f172a;
+    text-transform: capitalize;
+    font-size: 0.95rem;
+}
+
+.gap-item-modern .gap-badge {
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 2px 12px;
+    border-radius: 20px;
+}
+
+.gap-item-modern .gap-badge.danger { background: #fef2f2; color: #dc2626; }
+.gap-item-modern .gap-badge.warning { background: #fffbeb; color: #d97706; }
+.gap-item-modern .gap-badge.success { background: #f0fdf4; color: #16a34a; }
+
+.gap-item-modern .gap-meta {
+    font-size: 0.75rem;
+    color: #94a3b8;
+}
+
+.gap-item-modern .gap-progress {
+    margin-top: 8px;
+    height: 6px;
+    border-radius: 3px;
+    background: #e2e8f0;
+    overflow: hidden;
+    display: flex;
+}
+
+.gap-item-modern .gap-progress .seg-positive {
+    background: #22c55e;
+    height: 100%;
+    transition: width 0.6s ease;
+}
+
+.gap-item-modern .gap-progress .seg-neutral {
+    background: #eab308;
+    height: 100%;
+    transition: width 0.6s ease;
+}
+
+.gap-item-modern .gap-progress .seg-negative {
+    background: #ef4444;
+    height: 100%;
+    transition: width 0.6s ease;
+}
+
+.gap-item-modern .gap-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.65rem;
+    color: #94a3b8;
+    margin-top: 4px;
+}
+
+/* ----- Chart Container ----- */
+.chart-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.chart-circle {
+    position: relative;
+    width: 200px;
+    height: 200px;
+}
+
+.chart-circle canvas {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+.chart-center-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+.chart-center-text .number {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #0f172a;
+    line-height: 1;
+}
+
+.chart-center-text .label {
+    font-size: 0.7rem;
+    color: #94a3b8;
+}
+
+.chart-legend {
+    display: flex;
+    gap: 1.5rem;
+    margin-top: 1rem;
+    justify-content: center;
+}
+
+.chart-legend .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.8rem;
+    color: #475569;
+}
+
+.chart-legend .legend-item .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+}
+
+.chart-legend .legend-item .dot.positive { background: #22c55e; }
+.chart-legend .legend-item .dot.neutral { background: #eab308; }
+.chart-legend .legend-item .dot.negative { background: #ef4444; }
+
+/* ----- Aspect Table ----- */
+.table-aspect {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table-aspect th {
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #94a3b8;
+    padding: 10px 12px;
+    border-bottom: 2px solid #e2e8f0;
+    text-align: left;
+}
+
+.table-aspect td {
+    padding: 10px 12px;
+    border-bottom: 1px solid #f1f5f9;
+    vertical-align: middle;
+    font-size: 0.9rem;
+    color: #1e293b;
+}
+
+.table-aspect tr:hover td {
+    background: #f8fafc;
+}
+
+.table-aspect .aspect-name {
+    font-weight: 600;
+    color: #0f172a;
+    text-transform: capitalize;
+    text-decoration: none;
+}
+
+.table-aspect .aspect-name:hover {
+    color: #3b82f6;
+}
+
+.table-aspect .count-pos { color: #22c55e; font-weight: 600; }
+.table-aspect .count-neu { color: #eab308; font-weight: 600; }
+.table-aspect .count-neg { color: #ef4444; font-weight: 600; }
+
+.status-badge-modern {
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 3px 12px;
+    border-radius: 20px;
+    display: inline-block;
+}
+
+.status-badge-modern.good { background: #dcfce7; color: #16a34a; }
+.status-badge-modern.needs-work { background: #fee2e2; color: #dc2626; }
+.status-badge-modern.mixed { background: #fef9c3; color: #ca8a04; }
+.status-badge-modern.no-data { background: #f1f5f9; color: #94a3b8; }
+
+/* ----- Review Cards ----- */
+.review-card-modern {
+    background: #f8fafc;
+    border-radius: 10px;
+    padding: 1rem 1.2rem;
+    margin-bottom: 0.75rem;
+    border-left: 4px solid #3b82f6;
+    transition: all 0.2s ease;
+}
+
+.review-card-modern:hover {
+    background: #f1f5f9;
+}
+
+.review-card-modern.positive { border-left-color: #22c55e; }
+.review-card-modern.neutral { border-left-color: #eab308; }
+.review-card-modern.negative { border-left-color: #ef4444; }
+
+.review-card-modern .review-top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 4px;
+    flex-wrap: wrap;
+}
+
+.review-card-modern .review-sentiment-badge {
+    font-size: 0.65rem;
+    font-weight: 600;
+    padding: 2px 10px;
+    border-radius: 20px;
+}
+
+.review-card-modern .review-sentiment-badge.positive { background: #dcfce7; color: #16a34a; }
+.review-card-modern .review-sentiment-badge.neutral { background: #fef9c3; color: #ca8a04; }
+.review-card-modern .review-sentiment-badge.negative { background: #fee2e2; color: #dc2626; }
+
+.review-card-modern .review-stars {
+    color: #fbbf24;
+    font-size: 0.85rem;
+}
+
+.review-card-modern .review-date {
+    font-size: 0.7rem;
+    color: #94a3b8;
+}
+
+.review-card-modern .review-text {
+    font-size: 0.9rem;
+    color: #1e293b;
+    line-height: 1.5;
+    margin: 4px 0;
+}
+
+.review-card-modern .review-meta {
+    font-size: 0.7rem;
+    color: #94a3b8;
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+/* ----- Empty State ----- */
+.empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+}
+
+.empty-state .empty-icon {
+    font-size: 3rem;
+    color: #cbd5e1;
+    margin-bottom: 1rem;
+}
+
+.empty-state h6 {
+    color: #475569;
+    font-weight: 600;
+}
+
+.empty-state p {
+    color: #94a3b8;
+    font-size: 0.9rem;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (max-width: 768px) {
+    .hotel-hero {
+        padding: 1.5rem;
+    }
+    
+    .hotel-hero h1 {
+        font-size: 1.5rem;
+        flex-wrap: wrap;
+    }
+    
+    .hotel-hero .hotel-stats-row {
+        gap: 0.8rem;
+        font-size: 0.85rem;
+    }
+    
+    .stat-card-modern .stat-number {
+        font-size: 1.6rem;
+    }
+    
+    .card-modern .card-body-modern {
+        padding: 1rem;
+    }
+    
+    .card-modern .card-header-modern {
+        padding: 1rem;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+    }
+    
+    .chart-circle {
+        width: 150px;
+        height: 150px;
+    }
+    
+    .table-aspect {
+        font-size: 0.8rem;
+    }
+    
+    .table-aspect th,
+    .table-aspect td {
+        padding: 6px 8px;
+    }
+}
+
+@media (max-width: 576px) {
+    .hotel-hero .hero-actions {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .hotel-hero .hero-actions .btn {
+        width: 100%;
+        text-align: center;
+    }
+}

@@ -1,0 +1,723 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}ZTA National Dashboard{% endblock %}
+
+{% block extra_css %}
+<style>
+    .zta-wrapper { padding: 0; }
+
+    .zta-header {
+        background: linear-gradient(135deg, #1a8a4a 0%, #1a6e3a 100%);
+        border-radius: 16px;
+        padding: 1.5rem 2rem;
+        margin-bottom: 1.5rem;
+        color: #ffffff;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .zta-header .header-left h1 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .zta-header .header-left h1 i { color: #7dcea0; }
+
+    .zta-header .header-left .header-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.2rem;
+        color: rgba(255,255,255,0.6);
+        font-size: 0.85rem;
+        margin-top: 0.3rem;
+    }
+    .zta-header .header-left .header-meta .highlight { color: #fbbf24; }
+
+    .zta-header .header-right { display: flex; gap: 10px; flex-wrap: wrap; }
+    .zta-header .header-right .btn {
+        border-radius: 8px;
+        font-weight: 500;
+        font-size: 0.85rem;
+        padding: 6px 18px;
+        border: 1px solid rgba(255,255,255,0.15);
+        color: #ffffff;
+        background: transparent;
+        text-decoration: none;
+        transition: all 0.2s;
+    }
+    .zta-header .header-right .btn:hover { background: rgba(255,255,255,0.08); }
+    .zta-header .header-right .btn-primary-custom {
+        background: #ffffff;
+        color: #1a8a4a;
+        border: none;
+    }
+    .zta-header .header-right .btn-primary-custom:hover {
+        background: #f0f4f8;
+        transform: translateY(-2px);
+    }
+
+    .stat-grid-zta {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+    @media (max-width: 768px) { .stat-grid-zta { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 576px) { .stat-grid-zta { grid-template-columns: 1fr; } }
+
+    .stat-card-zta {
+        background: #ffffff;
+        border-radius: 12px;
+        padding: 1rem 1.2rem;
+        border: 1px solid #eef2f6;
+        text-align: center;
+        transition: all 0.2s;
+    }
+    .stat-card-zta:hover { transform: translateY(-3px); box-shadow: 0 4px 15px rgba(0,0,0,0.06); }
+    .stat-card-zta .stat-icon { font-size: 1.5rem; margin-bottom: 2px; }
+    .stat-card-zta .stat-label {
+        font-size: 0.65rem;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+        color: #94a3b8;
+        font-weight: 600;
+    }
+    .stat-card-zta .stat-number { font-size: 1.8rem; font-weight: 700; color: #1a5276; line-height: 1.2; }
+    .stat-card-zta .stat-sub { font-size: 0.7rem; color: #94a3b8; }
+
+    .chart-grid-zta {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.2rem;
+        margin-bottom: 1.5rem;
+    }
+    @media (max-width: 992px) { .chart-grid-zta { grid-template-columns: 1fr; } }
+
+    .chart-box {
+        background: #ffffff;
+        border-radius: 12px;
+        border: 1px solid #eef2f6;
+        padding: 1.2rem;
+        min-height: 320px;
+        position: relative;
+    }
+    .chart-box .chart-title {
+        font-weight: 600;
+        font-size: 0.85rem;
+        color: #1a5276;
+        margin-bottom: 0.8rem;
+        text-align: center;
+    }
+    .chart-box .chart-canvas-wrap {
+        position: relative;
+        width: 100%;
+        height: 240px;
+    }
+    .chart-box canvas { width: 100% !important; height: 100% !important; }
+
+    .section-card {
+        background: #ffffff;
+        border-radius: 12px;
+        border: 1px solid #eef2f6;
+        overflow: hidden;
+        margin-bottom: 1.5rem;
+    }
+    .section-card .card-head {
+        padding: 0.8rem 1.5rem;
+        border-bottom: 1px solid #eef2f6;
+        background: #fafbfc;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+    .section-card .card-head h5 {
+        font-weight: 600;
+        font-size: 0.9rem;
+        color: #1a5276;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .section-card .card-head .sub { font-weight: 400; font-size: 0.7rem; color: #94a3b8; }
+    .section-card .card-body { padding: 1rem 1.5rem; }
+
+    .region-row {
+        background: #f8fafc;
+        border-radius: 8px;
+        padding: 0.7rem 1rem;
+        margin-bottom: 0.5rem;
+        border-left: 3px solid #1a8a4a;
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 0.5rem 1rem;
+    }
+    .region-row .region-name { font-weight: 600; color: #0f172a; min-width: 120px; font-size: 0.85rem; }
+    .region-row .region-stats { font-size: 0.75rem; color: #64748b; min-width: 100px; }
+    .region-row .region-rating { font-size: 0.8rem; font-weight: 600; min-width: 60px; }
+    .region-row .region-rating .star { color: #f57c00; }
+    .region-row .region-bar-wrap { flex: 1; min-width: 120px; }
+    .region-row .region-bar {
+        height: 4px;
+        border-radius: 2px;
+        background: #eef2f6;
+        overflow: hidden;
+        display: flex;
+    }
+    .region-row .region-bar .pos { background: #1a8a4a; height: 100%; }
+    .region-row .region-bar .neu { background: #f57c00; height: 100%; }
+    .region-row .region-bar .neg { background: #c62828; height: 100%; }
+    .region-row .region-labels {
+        display: flex;
+        gap: 0.8rem;
+        font-size: 0.55rem;
+        color: #94a3b8;
+        margin-top: 2px;
+    }
+
+    .rank-item {
+        display: flex;
+        align-items: center;
+        padding: 0.5rem 1rem;
+        border-bottom: 1px solid #f1f5f9;
+        transition: all 0.2s;
+    }
+    .rank-item:last-child { border-bottom: none; }
+    .rank-item:hover { background: #f8fafc; }
+    .rank-item .rank-num {
+        width: 24px; height: 24px;
+        border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        font-weight: 700; font-size: 0.65rem;
+        color: #fff; margin-right: 10px; flex-shrink: 0;
+    }
+    .rank-item .rank-num.gold { background: #f57c00; }
+    .rank-item .rank-num.silver { background: #94a3b8; }
+    .rank-item .rank-num.bronze { background: #d97706; }
+    .rank-item .rank-num.other { background: #cbd5e1; color: #475569; }
+    .rank-item .rank-info { flex: 1; }
+    .rank-item .rank-info .hotel-link {
+        font-weight: 600; color: #1a5276;
+        text-decoration: none; font-size: 0.85rem;
+    }
+    .rank-item .rank-info .hotel-link:hover { color: #1a8a4a; }
+    .rank-item .rank-info .hotel-detail { font-size: 0.7rem; color: #64748b; }
+    .rank-item .rank-info .hotel-detail .stars { color: #f57c00; }
+
+    .chart-empty {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        color: #94a3b8;
+        font-size: 0.8rem;
+        flex-direction: column;
+        gap: 6px;
+    }
+    .chart-empty i {
+        font-size: 1.5rem;
+        color: #cbd5e1;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="zta-wrapper">
+
+    <!-- ZTA Header -->
+    <div class="zta-header">
+        <div class="header-left">
+            <h1>
+                <i class="fas fa-building"></i>
+                Zimbabwe Tourism Authority
+            </h1>
+            <div class="header-meta">
+                <span><i class="fas fa-calendar-day"></i> {{ today|date:"F d, Y" }}</span>
+                <span><i class="fas fa-hotel"></i> {{ total_hotels }} Hotels</span>
+                <span><i class="fas fa-comments"></i> {{ total_reviews }} Reviews</span>
+                <span><i class="fas fa-star highlight"></i> {{ national_avg_rating|floatformat:1 }} / 5.0</span>
+            </div>
+        </div>
+        <div class="header-right">
+            <a href="{% url 'core:zta_regional_report' %}" class="btn">
+                <i class="fas fa-file-pdf"></i> Generate Report
+            </a>
+            <a href="#" onclick="window.print()" class="btn btn-primary-custom">
+                <i class="fas fa-print"></i> Print
+            </a>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="stat-grid-zta">
+        <div class="stat-card-zta">
+            <div class="stat-icon">🏨</div>
+            <div class="stat-label">Total Hotels</div>
+            <div class="stat-number">{{ total_hotels }}</div>
+        </div>
+        <div class="stat-card-zta">
+            <div class="stat-icon">💬</div>
+            <div class="stat-label">Total Reviews</div>
+            <div class="stat-number">{{ total_reviews }}</div>
+        </div>
+        <div class="stat-card-zta">
+            <div class="stat-icon">⭐</div>
+            <div class="stat-label">National Avg</div>
+            <div class="stat-number">{{ national_avg_rating|floatformat:1 }}</div>
+        </div>
+        <div class="stat-card-zta">
+            <div class="stat-icon">😊</div>
+            <div class="stat-label">Positive Rate</div>
+            <div class="stat-number">{{ positive_rate|floatformat:0 }}%</div>
+            <div class="stat-sub">{{ sentiment_counts.positive }} positive reviews</div>
+        </div>
+    </div>
+
+    <!-- Chart Grid -->
+    <div class="chart-grid-zta">
+        <div class="chart-box">
+            <div class="chart-title">National Sentiment</div>
+            <div class="chart-canvas-wrap">
+                <canvas id="sentimentChart"></canvas>
+            </div>
+        </div>
+        <div class="chart-box">
+            <div class="chart-title">Rating Distribution</div>
+            <div class="chart-canvas-wrap">
+                <canvas id="ratingChart"></canvas>
+            </div>
+        </div>
+        <div class="chart-box">
+            <div class="chart-title">Monthly Review Trend</div>
+            <div class="chart-canvas-wrap">
+                <canvas id="trendChart"></canvas>
+            </div>
+        </div>
+        <div class="chart-box">
+            <div class="chart-title">Regional Performance</div>
+            <div class="chart-canvas-wrap">
+                <canvas id="regionalChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Regional Performance -->
+    <div class="section-card">
+        <div class="card-head">
+            <h5>
+                <i class="fas fa-map-marked-alt text-success"></i>
+                Regional Performance
+                <span class="sub">Hotel performance by region</span>
+            </h5>
+        </div>
+        <div class="card-body">
+            {% for region_stat in regional_stats %}
+                <div class="region-row">
+                    <div class="region-name">{{ region_stat.region.name }}</div>
+                    <div class="region-stats">{{ region_stat.hotel_count }} hotels · {{ region_stat.review_count }} reviews</div>
+                    <div class="region-rating">
+                        <span class="star">⭐</span> {{ region_stat.avg_rating|floatformat:1 }}
+                    </div>
+                    <div class="region-bar-wrap">
+                        <div class="region-bar">
+                            {% if region_stat.review_count > 0 %}
+                                {% for sd in region_stat.sentiment_dist %}
+                                    {% if sd.sentiment_overall == 'positive' %}
+                                        <div class="pos" style="width: {% widthratio sd.count region_stat.review_count 100 %}%;"></div>
+                                    {% elif sd.sentiment_overall == 'neutral' %}
+                                        <div class="neu" style="width: {% widthratio sd.count region_stat.review_count 100 %}%;"></div>
+                                    {% elif sd.sentiment_overall == 'negative' %}
+                                        <div class="neg" style="width: {% widthratio sd.count region_stat.review_count 100 %}%;"></div>
+                                    {% endif %}
+                                {% endfor %}
+                            {% else %}
+                                <div style="width:100%; height:100%; background:#eef2f6;"></div>
+                            {% endif %}
+                        </div>
+                        <div class="region-labels">
+                            <span>👍 Positive</span>
+                            <span>😐 Neutral</span>
+                            <span>👎 Negative</span>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="text-center py-3 text-muted">No regional data available</div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Top / Bottom Hotels -->
+    <div class="row g-3 mb-4">
+        <div class="col-lg-6">
+            <div class="section-card">
+                <div class="card-head">
+                    <h5>
+                        <i class="fas fa-arrow-up text-success"></i>
+                        Top Performers
+                        <span class="sub">Highest rated hotels</span>
+                    </h5>
+                </div>
+                <div class="card-body p-0">
+                    {% for hotel in top_hotels %}
+                        <div class="rank-item">
+                            <span class="rank-num {% if forloop.counter == 1 %}gold{% elif forloop.counter == 2 %}silver{% elif forloop.counter == 3 %}bronze{% else %}other{% endif %}">
+                                {{ forloop.counter }}
+                            </span>
+                            <div class="rank-info">
+                                <a href="{% url 'core:zta_hotel_detail' hotel.id %}" class="hotel-link">{{ hotel.name }}</a>
+                                <div class="hotel-detail">
+                                    <span class="stars">⭐ {{ hotel.avg_rating|floatformat:1 }}</span>
+                                    <span class="text-muted ms-2">{{ hotel.get_total_reviews }} reviews</span>
+                                </div>
+                            </div>
+                        </div>
+                    {% empty %}
+                        <div class="text-center py-3 text-muted">No data available</div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="section-card">
+                <div class="card-head">
+                    <h5>
+                        <i class="fas fa-arrow-down text-danger"></i>
+                        Needs Attention
+                        <span class="sub">Lowest rated hotels</span>
+                    </h5>
+                </div>
+                <div class="card-body p-0">
+                    {% for hotel in bottom_hotels %}
+                        <div class="rank-item">
+                            <span class="rank-num other">{{ forloop.counter }}</span>
+                            <div class="rank-info">
+                                <a href="{% url 'core:zta_hotel_detail' hotel.id %}" class="hotel-link">{{ hotel.name }}</a>
+                                <div class="hotel-detail">
+                                    <span class="stars">⭐ {{ hotel.avg_rating|floatformat:1 }}</span>
+                                    <span class="text-muted ms-2">{{ hotel.get_total_reviews }} reviews</span>
+                                </div>
+                            </div>
+                        </div>
+                    {% empty %}
+                        <div class="text-center py-3 text-muted">No data available</div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- ============================================ -->
+<!-- SAFE JSON DATA BLOBS (read by the script below) -->
+<!-- ============================================ -->
+{{ rating_distribution|json_script:"rating-distribution-data" }}
+{{ monthly_trend|json_script:"monthly-trend-data" }}
+{{ regional_stats_json|json_script:"regional-stats-data" }}
+{{ sentiment_counts|json_script:"sentiment-counts-data" }}
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    // ---------- Safe JSON reader ----------
+    function readJSON(id) {
+        const el = document.getElementById(id);
+        if (!el) {
+            console.warn('⚠️ Missing json_script element:', id);
+            return null;
+        }
+        try {
+            return JSON.parse(el.textContent);
+        } catch (e) {
+            console.error('❌ Failed to parse JSON from', id, e);
+            return null;
+        }
+    }
+
+    const sentimentCounts = readJSON('sentiment-counts-data') || { positive: 0, neutral: 0, negative: 0 };
+    const ratingDist      = readJSON('rating-distribution-data') || {};
+    const monthlyTrend    = readJSON('monthly-trend-data') || [];
+    const regionalStats   = readJSON('regional-stats-data') || [];
+
+    console.log('=== ZTA Dashboard Data ===');
+    console.log('Sentiment:', sentimentCounts);
+    console.log('Ratings:', ratingDist);
+    console.log('Monthly:', monthlyTrend);
+    console.log('Regional:', regionalStats);
+
+    const positive = sentimentCounts.positive || 0;
+    const neutral  = sentimentCounts.neutral  || 0;
+    const negative = sentimentCounts.negative || 0;
+
+    // ---------- Shared chart defaults ----------
+    Chart.defaults.font.family = 'Inter, sans-serif';
+    Chart.defaults.font.size = 11;
+    Chart.defaults.color = '#64748b';
+
+    // ---------- Chart 1: Sentiment Doughnut ----------
+    const ctx1 = document.getElementById('sentimentChart');
+    if (ctx1) {
+        if (positive + neutral + negative === 0) {
+            ctx1.parentElement.innerHTML = `
+                <div class="chart-empty">
+                    <i class="fas fa-chart-pie"></i>
+                    <span>No sentiment data yet</span>
+                </div>`;
+        } else {
+            new Chart(ctx1, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Positive', 'Neutral', 'Negative'],
+                    datasets: [{
+                        data: [positive, neutral, negative],
+                        backgroundColor: ['#1a8a4a', '#f57c00', '#c62828'],
+                        borderWidth: 2,
+                        borderColor: '#ffffff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '60%',
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: { usePointStyle: true, padding: 12, font: { size: 11 } }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(ctx) {
+                                    const total = ctx.dataset.data.reduce((a, b) => a + b, 0);
+                                    const pct = total ? ((ctx.parsed / total) * 100).toFixed(1) : 0;
+                                    return `${ctx.label}: ${ctx.parsed} (${pct}%)`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    }
+
+    // ---------- Chart 2: Rating Distribution ----------
+    const ctx2 = document.getElementById('ratingChart');
+    if (ctx2) {
+        const labels = ['1 Star', '2 Stars', '3 Stars', '4 Stars', '5 Stars'];
+        const data = ['1', '2', '3', '4', '5'].map(k => ratingDist[k] || 0);
+        const totalRatings = data.reduce((a, b) => a + b, 0);
+
+        if (totalRatings === 0) {
+            ctx2.parentElement.innerHTML = `
+                <div class="chart-empty">
+                    <i class="fas fa-star"></i>
+                    <span>No rating data yet</span>
+                </div>`;
+        } else {
+            new Chart(ctx2, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Reviews',
+                        data: data,
+                        backgroundColor: ['#c62828', '#f57c00', '#f9a825', '#1a8a4a', '#0f4c3a'],
+                        borderRadius: 6,
+                        barPercentage: 0.65
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(ctx) {
+                                    const pct = totalRatings
+                                        ? ((ctx.parsed.y / totalRatings) * 100).toFixed(1)
+                                        : 0;
+                                    return `${ctx.parsed.y} reviews (${pct}%)`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: { grid: { display: false } },
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: 'rgba(0,0,0,0.04)' },
+                            ticks: { precision: 0 }
+                        }
+                    }
+                }
+            });
+        }
+    }
+
+    // ---------- Chart 3: Monthly Trend ----------
+    const ctx3 = document.getElementById('trendChart');
+    if (ctx3) {
+        const hasMonthlyData = monthlyTrend &&
+                               monthlyTrend.length > 0 &&
+                               monthlyTrend.some(d => d.count > 0);
+
+        if (!hasMonthlyData) {
+            ctx3.parentElement.innerHTML = `
+                <div class="chart-empty">
+                    <i class="fas fa-chart-line"></i>
+                    <span>No monthly data yet</span>
+                </div>`;
+        } else {
+            new Chart(ctx3, {
+                type: 'line',
+                data: {
+                    labels: monthlyTrend.map(d => d.month),
+                    datasets: [
+                        {
+                            label: 'Reviews',
+                            data: monthlyTrend.map(d => d.count),
+                            borderColor: '#1a8a4a',
+                            backgroundColor: 'rgba(26, 138, 74, 0.10)',
+                            fill: true,
+                            tension: 0.35,
+                            pointBackgroundColor: '#1a8a4a',
+                            pointBorderColor: '#fff',
+                            pointRadius: 4,
+                            pointHoverRadius: 6,
+                            yAxisID: 'y'
+                        },
+                        {
+                            label: 'Avg Rating',
+                            data: monthlyTrend.map(d => d.avg_rating),
+                            borderColor: '#f57c00',
+                            backgroundColor: 'transparent',
+                            borderDash: [5, 5],
+                            fill: false,
+                            tension: 0.35,
+                            pointBackgroundColor: '#f57c00',
+                            pointBorderColor: '#fff',
+                            pointRadius: 4,
+                            pointHoverRadius: 6,
+                            yAxisID: 'y1'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: { usePointStyle: true, padding: 10, font: { size: 10 } }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            position: 'left',
+                            grid: { color: 'rgba(0,0,0,0.04)' },
+                            ticks: { precision: 0 },
+                            title: { display: true, text: 'Reviews', color: '#1a8a4a', font: { size: 10 } }
+                        },
+                        y1: {
+                            beginAtZero: true,
+                            max: 5,
+                            position: 'right',
+                            grid: { display: false },
+                            title: { display: true, text: 'Avg Rating', color: '#f57c00', font: { size: 10 } }
+                        }
+                    }
+                }
+            });
+        }
+    }
+
+    // ---------- Chart 4: Regional Comparison ----------
+    const ctx4 = document.getElementById('regionalChart');
+    if (ctx4) {
+        if (!regionalStats || regionalStats.length === 0) {
+            ctx4.parentElement.innerHTML = `
+                <div class="chart-empty">
+                    <i class="fas fa-map-marked-alt"></i>
+                    <span>No regional data yet</span>
+                </div>`;
+        } else {
+            const regionNames   = regionalStats.map(r => r.region.name);
+            const regionRatings = regionalStats.map(r => r.avg_rating || 0);
+            const regionReviews = regionalStats.map(r => r.review_count || 0);
+
+            new Chart(ctx4, {
+                type: 'bar',
+                data: {
+                    labels: regionNames,
+                    datasets: [
+                        {
+                            label: 'Avg Rating',
+                            data: regionRatings,
+                            backgroundColor: '#1a8a4a',
+                            borderRadius: 6,
+                            barPercentage: 0.6,
+                            categoryPercentage: 0.7,
+                            yAxisID: 'y'
+                        },
+                        {
+                            label: 'Reviews',
+                            data: regionReviews,
+                            backgroundColor: 'rgba(26, 138, 74, 0.30)',
+                            borderRadius: 6,
+                            barPercentage: 0.6,
+                            categoryPercentage: 0.7,
+                            yAxisID: 'y1'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: { usePointStyle: true, padding: 10, font: { size: 10 } }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { display: false },
+                            ticks: { font: { size: 9 } }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            max: 5,
+                            position: 'left',
+                            grid: { color: 'rgba(0,0,0,0.04)' },
+                            title: { display: true, text: 'Avg Rating', color: '#1a8a4a', font: { size: 10 } }
+                        },
+                        y1: {
+                            beginAtZero: true,
+                            position: 'right',
+                            grid: { display: false },
+                            ticks: { precision: 0 },
+                            title: { display: true, text: 'Reviews', color: '#64748b', font: { size: 10 } }
+                        }
+                    }
+                }
+            });
+        }
+    }
+});
+</script>
+{% endblock %}

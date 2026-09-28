@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}ZTA Login{% endblock %}
+
+{% block extra_css %}
+<style>
+    .login-wrapper {
+        max-width: 440px;
+        margin: 0 auto;
+    }
+    
+    .login-card {
+        background: #ffffff;
+        border-radius: 16px;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+        border: 1px solid #eef2f6;
+        overflow: hidden;
+    }
+    
+    .login-card .login-header {
+        background: #1a5276;
+        padding: 1.5rem;
+        text-align: center;
+        color: #ffffff;
+    }
+    
+    .login-card .login-header h4 {
+        font-weight: 700;
+        margin: 0;
+    }
+    
+    .login-card .login-header p {
+        color: rgba(255,255,255,0.6);
+        font-size: 0.85rem;
+        margin: 0;
+    }
+    
+    .login-card .login-body {
+        padding: 2rem;
+    }
+    
+    .login-card .login-body .form-control {
+        border-radius: 10px;
+        border: 1px solid #eef2f6;
+        padding: 0.7rem 1rem;
+    }
+    
+    .login-card .login-body .form-control:focus {
+        border-color: #1a5276;
+        box-shadow: 0 0 0 3px rgba(26, 82, 118, 0.08);
+    }
+    
+    .login-card .login-body .btn-login {
+        background: #1a5276;
+        border: none;
+        border-radius: 10px;
+        padding: 0.75rem;
+        font-weight: 600;
+        width: 100%;
+        color: #ffffff;
+        transition: all 0.3s;
+    }
+    
+    .login-card .login-body .btn-login:hover {
+        background: #1a3a5a;
+        transform: translateY(-2px);
+    }
+    
+    .login-card .login-footer {
+        padding: 1rem 2rem 2rem;
+        text-align: center;
+        border-top: 1px solid #eef2f6;
+    }
+    
+    .login-card .login-footer a {
+        color: #1a5276;
+        text-decoration: none;
+        font-weight: 500;
+    }
+    
+    .login-card .login-footer a:hover {
+        text-decoration: underline;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="login-wrapper">
+    <div class="login-card">
+        <div class="login-header">
+            <h4><i class="fas fa-building me-2"></i>ZTA Login</h4>
+            <p>Zimbabwe Tourism Authority Dashboard</p>
+        </div>
+        <div class="login-body">
+            <form method="POST">
+                {% csrf_token %}
+                {{ form|crispy }}
+                <button type="submit" class="btn-login">
+                    <i class="fas fa-sign-in-alt me-2"></i> Login
+                </button>
+            </form>
+        </div>
+        <div class="login-footer">
+            <p class="mb-0">
+                <a href="{% url 'core:hotel_login' %}">Hotel Manager Login</a>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

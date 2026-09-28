@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Register Hotel{% endblock %}
+
+{% block extra_css %}
+<style>
+    .register-wrapper {
+        max-width: 700px;
+        margin: 0 auto;
+    }
+    
+    .register-card {
+        background: #ffffff;
+        border-radius: 16px;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+        border: 1px solid #eef2f6;
+        overflow: hidden;
+    }
+    
+    .register-card .register-header {
+        background: #1a5276;
+        padding: 1.5rem;
+        text-align: center;
+        color: #ffffff;
+    }
+    
+    .register-card .register-header h4 {
+        font-weight: 700;
+        margin: 0;
+    }
+    
+    .register-card .register-header p {
+        color: rgba(255,255,255,0.6);
+        font-size: 0.85rem;
+        margin: 0;
+    }
+    
+    .register-card .register-body {
+        padding: 2rem;
+    }
+    
+    .register-card .register-body .form-control {
+        border-radius: 10px;
+        border: 1px solid #eef2f6;
+        padding: 0.7rem 1rem;
+    }
+    
+    .register-card .register-body .form-control:focus {
+        border-color: #1a8a4a;
+        box-shadow: 0 0 0 3px rgba(26, 138, 74, 0.08);
+    }
+    
+    .register-card .register-body .btn-register {
+        background: #1a8a4a;
+        border: none;
+        border-radius: 10px;
+        padding: 0.75rem;
+        font-weight: 600;
+        width: 100%;
+        color: #ffffff;
+        transition: all 0.3s;
+    }
+    
+    .register-card .register-body .btn-register:hover {
+        background: #1a6e3a;
+        transform: translateY(-2px);
+    }
+    
+    .register-card .register-footer {
+        padding: 1rem 2rem 2rem;
+        text-align: center;
+        border-top: 1px solid #eef2f6;
+    }
+    
+    .register-card .register-footer a {
+        color: #1a5276;
+        text-decoration: none;
+        font-weight: 500;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="register-wrapper">
+    <div class="register-card">
+        <div class="register-header">
+            <h4><i class="fas fa-hotel me-2"></i>Register Your Hotel</h4>
+            <p>Join the Sentiment Analysis System</p>
+        </div>
+        <div class="register-body">
+            <form method="POST">
+                {% csrf_token %}
+                {{ form|crispy }}
+                <button type="submit" class="btn-register">
+                    <i class="fas fa-user-plus me-2"></i> Register Hotel
+                </button>
+            </form>
+        </div>
+        <div class="register-footer">
+            <p class="mb-0">
+                Already have an account? 
+                <a href="{% url 'core:hotel_login' %}">Login here</a>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

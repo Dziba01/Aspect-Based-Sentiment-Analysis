@@ -1,0 +1,504 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Hotel Detail - {{ hotel.name }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* ============================================
+       HOTEL DETAIL PAGE - GREEN THEME
+       ============================================ */
+    
+    .hotel-detail-wrapper {
+        padding: 0;
+    }
+    
+    /* Hotel Hero - Green Theme */
+    .hotel-hero {
+        background: linear-gradient(135deg, #1a8a4a 0%, #1a6e3a 100%);
+        border-radius: 16px;
+        padding: 2rem 2.5rem;
+        margin-bottom: 1.5rem;
+        color: #ffffff;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+    
+    .hotel-hero .hotel-info h1 {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    
+    .hotel-hero .hotel-info h1 i {
+        color: #7dcea0;
+    }
+    
+    .hotel-hero .hotel-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.2rem;
+        margin-top: 0.3rem;
+        color: rgba(255,255,255,0.75);
+        font-size: 0.9rem;
+    }
+    
+    .hotel-hero .hotel-meta i {
+        margin-right: 4px;
+    }
+    
+    .hotel-hero .hotel-meta .star {
+        color: #fbbf24;
+    }
+    
+    .hotel-hero .hotel-meta .badge-status {
+        background: rgba(255,255,255,0.15);
+        padding: 2px 14px;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        color: #ffffff;
+    }
+    
+    .hotel-hero .hotel-meta .badge-status.approved {
+        background: rgba(255,255,255,0.2);
+        color: #7dcea0;
+    }
+    
+    .hotel-hero .hotel-actions .btn-back {
+        background: rgba(255,255,255,0.12);
+        color: #ffffff;
+        border: none;
+        border-radius: 8px;
+        padding: 8px 20px;
+        font-weight: 500;
+        font-size: 0.85rem;
+        text-decoration: none;
+        transition: all 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+    
+    .hotel-hero .hotel-actions .btn-back:hover {
+        background: rgba(255,255,255,0.2);
+        transform: translateY(-2px);
+    }
+    
+    /* Stat Cards - Green Theme */
+    .stat-grid-detail {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    @media (max-width: 768px) {
+        .stat-grid-detail {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+    @media (max-width: 576px) {
+        .stat-grid-detail {
+            grid-template-columns: 1fr;
+        }
+    }
+    
+    .stat-detail-card {
+        background: #ffffff;
+        border-radius: 12px;
+        padding: 1rem 1.2rem;
+        border: 1px solid #eef2f6;
+        text-align: center;
+        transition: all 0.2s;
+    }
+    
+    .stat-detail-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+    }
+    
+    .stat-detail-card .stat-icon {
+        font-size: 1.5rem;
+        margin-bottom: 2px;
+    }
+    
+    .stat-detail-card .stat-label {
+        font-size: 0.65rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: #94a3b8;
+        font-weight: 600;
+    }
+    
+    .stat-detail-card .stat-number {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #1a5276;
+        line-height: 1.2;
+    }
+    
+    .stat-detail-card .stat-sub {
+        font-size: 0.7rem;
+        color: #94a3b8;
+    }
+    
+    /* Section Card */
+    .section-card {
+        background: #ffffff;
+        border-radius: 12px;
+        border: 1px solid #eef2f6;
+        overflow: hidden;
+        margin-bottom: 1.5rem;
+    }
+    
+    .section-card .card-head {
+        padding: 0.8rem 1.5rem;
+        border-bottom: 1px solid #eef2f6;
+        background: #fafbfc;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+    
+    .section-card .card-head h5 {
+        font-weight: 600;
+        font-size: 0.9rem;
+        color: #1a5276;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .section-card .card-head .sub {
+        font-weight: 400;
+        font-size: 0.7rem;
+        color: #94a3b8;
+    }
+    
+    .section-card .card-body {
+        padding: 1rem 1.5rem;
+    }
+    
+    .section-card .card-body.p0 {
+        padding: 0;
+    }
+    
+    /* Aspect Table */
+    .aspect-table-detail {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.85rem;
+    }
+    
+    .aspect-table-detail th {
+        font-size: 0.65rem;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+        color: #94a3b8;
+        padding: 8px 10px;
+        border-bottom: 2px solid #eef2f6;
+        text-align: left;
+        font-weight: 600;
+    }
+    
+    .aspect-table-detail td {
+        padding: 8px 10px;
+        border-bottom: 1px solid #f1f5f9;
+        vertical-align: middle;
+    }
+    
+    .aspect-table-detail tr:hover td {
+        background: #f8fafc;
+    }
+    
+    .aspect-table-detail .aspect-name {
+        font-weight: 600;
+        color: #1a5276;
+        text-transform: capitalize;
+    }
+    
+    .aspect-table-detail .count-pos { color: #1a8a4a; font-weight: 600; }
+    .aspect-table-detail .count-neu { color: #f57c00; font-weight: 600; }
+    .aspect-table-detail .count-neg { color: #c62828; font-weight: 600; }
+    
+    .progress-mini {
+        height: 5px;
+        border-radius: 3px;
+        background: #eef2f6;
+        overflow: hidden;
+        display: flex;
+        width: 80px;
+        margin: 0 auto;
+    }
+    
+    .progress-mini .p-pos { background: #1a8a4a; height: 100%; }
+    .progress-mini .p-neu { background: #f57c00; height: 100%; }
+    .progress-mini .p-neg { background: #c62828; height: 100%; }
+    
+    .status-badge-detail {
+        font-size: 0.65rem;
+        font-weight: 600;
+        padding: 2px 12px;
+        border-radius: 12px;
+        display: inline-block;
+    }
+    
+    .status-badge-detail.good { background: #e8f5e9; color: #1a8a4a; }
+    .status-badge-detail.needs-work { background: #ffebee; color: #c62828; }
+    .status-badge-detail.mixed { background: #fff3e0; color: #f57c00; }
+    .status-badge-detail.no-data { background: #f1f5f9; color: #94a3b8; }
+    
+    /* Gap Cards */
+    .gap-grid-detail {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 0.8rem;
+    }
+    
+    .gap-card-detail {
+        background: #f8fafc;
+        border-radius: 10px;
+        padding: 0.8rem 1.2rem;
+        border-left: 4px solid #c62828;
+    }
+    
+    .gap-card-detail .gap-title {
+        font-weight: 600;
+        color: #1a5276;
+        text-transform: capitalize;
+        font-size: 0.9rem;
+    }
+    
+    .gap-card-detail .gap-badge {
+        font-size: 0.65rem;
+        font-weight: 600;
+        padding: 2px 12px;
+        border-radius: 12px;
+        background: #ffebee;
+        color: #c62828;
+    }
+    
+    .gap-card-detail .gap-progress {
+        height: 5px;
+        border-radius: 3px;
+        background: #eef2f6;
+        overflow: hidden;
+        display: flex;
+        margin-top: 4px;
+    }
+    
+    .gap-card-detail .gap-progress .g-pos { background: #02fb06; height: 100%; }
+    .gap-card-detail .gap-progress .g-neu { background: #f57c00; height: 100%; }
+    .gap-card-detail .gap-progress .g-neg { background: #c62828; height: 100%; }
+    
+    .gap-card-detail .gap-labels {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.55rem;
+        color: #94a3b8;
+        margin-top: 2px;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+        .hotel-hero {
+            padding: 1.2rem;
+        }
+        .hotel-hero .hotel-info h1 {
+            font-size: 1.3rem;
+            flex-wrap: wrap;
+        }
+        .hotel-hero .hotel-meta {
+            gap: 0.8rem;
+            font-size: 0.8rem;
+        }
+        .stat-detail-card .stat-number {
+            font-size: 1.4rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="hotel-detail-wrapper">
+
+    <!-- ============================================ -->
+    <!-- HOTEL HERO - GREEN THEME -->
+    <!-- ============================================ -->
+    <div class="hotel-hero">
+        <div class="hotel-info">
+            <h1>
+                <i class="fas fa-hotel"></i>
+                {{ hotel.name }}
+            </h1>
+            <div class="hotel-meta">
+                <span><i class="fas fa-map-marker-alt"></i> {{ hotel.region.name }}</span>
+                <span><i class="fas fa-tag"></i> {{ hotel.get_hotel_type_display }}</span>
+                <span><i class="fas fa-star star"></i> {{ avg_rating|floatformat:1 }} / 5.0</span>
+                <span><i class="fas fa-comments"></i> {{ total_reviews }} reviews</span>
+                <span class="badge-status approved">
+                    <i class="fas fa-check-circle"></i> ZTA Approved
+                </span>
+            </div>
+        </div>
+        <div class="hotel-actions">
+            <a href="{% url 'core:zta_dashboard' %}" class="btn-back">
+                <i class="fas fa-arrow-left"></i> Back
+            </a>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- STATISTICS CARDS -->
+    <!-- ============================================ -->
+    <div class="stat-grid-detail">
+        <div class="stat-detail-card">
+            <div class="stat-icon">📊</div>
+            <div class="stat-label">Total Reviews</div>
+            <div class="stat-number">{{ total_reviews }}</div>
+            <div class="stat-sub">All feedback</div>
+        </div>
+        <div class="stat-detail-card">
+            <div class="stat-icon">⭐</div>
+            <div class="stat-label">Average Rating</div>
+            <div class="stat-number">{{ avg_rating|floatformat:1 }}</div>
+            <div class="stat-sub">Out of 5.0</div>
+        </div>
+        <div class="stat-detail-card">
+            <div class="stat-icon">😊</div>
+            <div class="stat-label">Positive Rate</div>
+            {% with positive=sentiment_dist.positive|default:0 %}
+                {% if total_reviews > 0 %}
+                    <div class="stat-number">{{ positive|divisibleby:total_reviews|add:0|floatformat:0 }}%</div>
+                {% else %}
+                    <div class="stat-number">0%</div>
+                {% endif %}
+            {% endwith %}
+            <div class="stat-sub">{{ sentiment_dist.positive|default:0 }} positive</div>
+        </div>
+        <div class="stat-detail-card">
+            <div class="stat-icon">⚠️</div>
+            <div class="stat-label">Service Gaps</div>
+            <div class="stat-number">{{ service_gaps|length }}</div>
+            <div class="stat-sub">Need attention</div>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- ASPECT SENTIMENT TABLE -->
+    <!-- ============================================ -->
+    <div class="section-card">
+        <div class="card-head">
+            <h5>
+                <i class="fas fa-chart-bar" style="color: #1a8a4a;"></i>
+                Aspect-Based Sentiment Analysis
+                <span class="sub">Detailed breakdown by service aspect</span>
+            </h5>
+        </div>
+        <div class="card-body p0">
+            <div class="table-responsive">
+                <table class="aspect-table-detail">
+                    <thead>
+                        <tr>
+                            <th>Aspect</th>
+                            <th style="text-align:center;">👍 Positive</th>
+                            <th style="text-align:center;">😐 Neutral</th>
+                            <th style="text-align:center;">👎 Negative</th>
+                            <th style="text-align:center;">Total</th>
+                            <th style="text-align:center;">Distribution</th>
+                            <th style="text-align:center;">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for aspect, sentiments in aspect_sentiments.items %}
+                            <tr>
+                                <td><span class="aspect-name">{{ aspect|cut:"_"|title }}</span></td>
+                                <td style="text-align:center;" class="count-pos">{{ sentiments.positive }}</td>
+                                <td style="text-align:center;" class="count-neu">{{ sentiments.neutral }}</td>
+                                <td style="text-align:center;" class="count-neg">{{ sentiments.negative }}</td>
+                                <td style="text-align:center; font-weight:600;">
+                                    {{ sentiments.positive|add:sentiments.neutral|add:sentiments.negative }}
+                                </td>
+                                <td style="text-align:center;">
+                                    {% with total=sentiments.positive|add:sentiments.neutral|add:sentiments.negative %}
+                                        {% if total > 0 %}
+                                            <div class="progress-mini">
+                                                <div class="p-pos" style="width: {{ sentiments.positive|add:0|divisibleby:total|add:0|floatformat:0 }}%;"></div>
+                                                <div class="p-neu" style="width: {{ sentiments.neutral|add:0|divisibleby:total|add:0|floatformat:0 }}%;"></div>
+                                                <div class="p-neg" style="width: {{ sentiments.negative|add:0|divisibleby:total|add:0|floatformat:0 }}%;"></div>
+                                            </div>
+                                        {% else %}
+                                            <span class="text-muted">—</span>
+                                        {% endif %}
+                                    {% endwith %}
+                                </td>
+                                <td style="text-align:center;">
+                                    {% with total=sentiments.positive|add:sentiments.neutral|add:sentiments.negative %}
+                                        {% if total > 0 %}
+                                            {% if sentiments.positive > sentiments.negative and sentiments.positive > sentiments.neutral %}
+                                                <span class="status-badge-detail good">✓ Good</span>
+                                            {% elif sentiments.negative > sentiments.positive and sentiments.negative > sentiments.neutral %}
+                                                <span class="status-badge-detail needs-work">⚠ Needs Work</span>
+                                            {% else %}
+                                                <span class="status-badge-detail mixed">— Mixed</span>
+                                            {% endif %}
+                                        {% else %}
+                                            <span class="status-badge-detail no-data">No Data</span>
+                                        {% endif %}
+                                    {% endwith %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- SERVICE GAPS -->
+    <!-- ============================================ -->
+    {% if service_gaps %}
+        <div class="section-card">
+            <div class="card-head">
+                <h5>
+                    <i class="fas fa-exclamation-triangle" style="color: #c62828;"></i>
+                    Service Gaps for {{ hotel.name }}
+                    <span class="sub">Aspects with highest negative sentiment</span>
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="gap-grid-detail">
+                    {% for gap in service_gaps %}
+                        <div class="gap-card-detail">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="gap-title">{{ gap.aspect|cut:"_"|title }}</span>
+                                <span class="gap-badge">{{ gap.negative_percentage|floatformat:0 }}% negative</span>
+                            </div>
+                            <div class="gap-progress">
+                                <div class="g-pos" style="width: {{ gap.positive_percentage|floatformat:0 }}%;"></div>
+                                <div class="g-neu" style="width: {{ gap.neutral_percentage|floatformat:0 }}%;"></div>
+                                <div class="g-neg" style="width: {{ gap.negative_percentage|floatformat:0 }}%;"></div>
+                            </div>
+                            <div class="gap-labels">
+                                <span>{{ gap.positive_count }} 👍</span>
+                                <span>{{ gap.neutral_count }} 😐</span>
+                                <span>{{ gap.negative_count }} 👎</span>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+</div>
+{% endblock %}

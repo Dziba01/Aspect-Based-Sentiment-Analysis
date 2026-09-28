@@ -1,0 +1,1038 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Dashboard - {{ hotel.name }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* ============================================
+       HOTEL DASHBOARD - PROFESSIONAL CLEAN
+       ============================================ */
+    
+    /* Hotel Header */
+    .hotel-header {
+        background: linear-gradient(135deg, #1a5276 0%, #1a8a4a 100%);
+        border-radius: 16px;
+        padding: 1.5rem 2rem;
+        margin-bottom: 1.5rem;
+        color: #ffffff;
+    }
+    
+    .hotel-header h1 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    
+    .hotel-header .hotel-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-top: 0.4rem;
+        color: rgba(255,255,255,0.7);
+        font-size: 0.85rem;
+    }
+    
+    .hotel-header .hotel-meta i {
+        margin-right: 4px;
+    }
+    
+    .hotel-header .hotel-meta .highlight {
+        color: #fbbf24;
+    }
+    
+    .hotel-header .hotel-actions {
+        display: flex;
+        gap: 10px;
+        justify-content: flex-end;
+        flex-wrap: wrap;
+    }
+    
+    .hotel-header .hotel-actions .btn {
+        border-radius: 8px;
+        font-weight: 500;
+        font-size: 0.85rem;
+        padding: 6px 18px;
+    }
+    
+    .hotel-header .hotel-actions .btn-outline-light {
+        border-color: rgba(255,255,255,0.15);
+        color: #ffffff;
+    }
+    
+    .hotel-header .hotel-actions .btn-outline-light:hover {
+        background: rgba(255,255,255,0.08);
+    }
+    
+    .hotel-header .hotel-actions .btn-light {
+        background: #ffffff;
+        color: #1a5276;
+    }
+    
+    .hotel-header .hotel-actions .btn-light:hover {
+        background: #f1f5f9;
+    }
+    
+    /* Stat Cards */
+    .stat-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    @media (max-width: 768px) {
+        .stat-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+    
+    @media (max-width: 576px) {
+        .stat-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+    
+    .stat-card {
+        background: #ffffff;
+        border-radius: 12px;
+        padding: 1rem 1.2rem;
+        border: 1px solid #eef2f6;
+        transition: all 0.2s;
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.06);
+    }
+    
+    .stat-card .stat-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+    }
+    
+    .stat-card .stat-icon {
+        width: 38px;
+        height: 38px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+    }
+    
+    .stat-card .stat-icon.blue { background: #e8f0fe; color: #1a5276; }
+    .stat-card .stat-icon.green { background: #e8f5e9; color: #1a8a4a; }
+    .stat-card .stat-icon.yellow { background: #fff8e1; color: #f57c00; }
+    .stat-card .stat-icon.red { background: #ffebee; color: #c62828; }
+    
+    .stat-card .stat-label {
+        font-size: 0.65rem;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+        color: #94a3b8;
+        font-weight: 600;
+    }
+    
+    .stat-card .stat-number {
+        font-size: 1.6rem;
+        font-weight: 700;
+        color: #0f172a;
+        line-height: 1.2;
+    }
+    
+    .stat-card .stat-sub {
+        font-size: 0.7rem;
+        color: #94a3b8;
+    }
+    
+    /* Chart Grid */
+    .chart-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.2rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    @media (max-width: 992px) {
+        .chart-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+    
+    .chart-container {
+        background: #ffffff;
+        border-radius: 12px;
+        border: 1px solid #eef2f6;
+        padding: 1.2rem;
+    }
+    
+    .chart-container .chart-title {
+        font-weight: 600;
+        font-size: 0.85rem;
+        color: #1a5276;
+        margin-bottom: 0.8rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .chart-container .chart-title .sub {
+        font-weight: 400;
+        font-size: 0.7rem;
+        color: #94a3b8;
+    }
+    
+    .chart-container canvas {
+        width: 100% !important;
+        height: auto !important;
+        max-height: 220px;
+    }
+    
+    /* Section Card */
+    .section-card {
+        background: #ffffff;
+        border-radius: 12px;
+        border: 1px solid #eef2f6;
+        overflow: hidden;
+        margin-bottom: 1.5rem;
+    }
+    
+    .section-card .card-header-custom {
+        padding: 0.8rem 1.5rem;
+        border-bottom: 1px solid #eef2f6;
+        background: #fafbfc;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+    
+    .section-card .card-header-custom h5 {
+        font-weight: 600;
+        font-size: 0.9rem;
+        color: #1a5276;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .section-card .card-header-custom .sub {
+        font-weight: 400;
+        font-size: 0.7rem;
+        color: #94a3b8;
+    }
+    
+    .section-card .card-body-custom {
+        padding: 1.2rem 1.5rem;
+    }
+    
+    .section-card .card-body-custom.p0 {
+        padding: 0;
+    }
+    
+    /* Aspect Table */
+    .aspect-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.85rem;
+    }
+    
+    .aspect-table th {
+        font-size: 0.65rem;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+        color: #94a3b8;
+        padding: 8px 10px;
+        border-bottom: 2px solid #eef2f6;
+        text-align: left;
+        font-weight: 600;
+    }
+    
+    .aspect-table td {
+        padding: 8px 10px;
+        border-bottom: 1px solid #f1f5f9;
+        vertical-align: middle;
+    }
+    
+    .aspect-table tr:hover td {
+        background: #f8fafc;
+    }
+    
+    .aspect-table .aspect-name {
+        font-weight: 600;
+        color: #0f172a;
+        text-transform: capitalize;
+        text-decoration: none;
+    }
+    
+    .aspect-table .aspect-name:hover {
+        color: #1a8a4a;
+    }
+    
+    .status-badge {
+        font-size: 0.65rem;
+        font-weight: 600;
+        padding: 2px 12px;
+        border-radius: 12px;
+        display: inline-block;
+    }
+    
+    .status-badge.good { background: #e8f5e9; color: #1a8a4a; }
+    .status-badge.needs-work { background: #ffebee; color: #c62828; }
+    .status-badge.mixed { background: #fff8e1; color: #f57c00; }
+    .status-badge.no-data { background: #f1f5f9; color: #94a3b8; }
+    
+    .progress-mini {
+        height: 5px;
+        border-radius: 3px;
+        background: #eef2f6;
+        overflow: hidden;
+        display: flex;
+        width: 80px;
+        margin: 0 auto;
+    }
+    
+    .progress-mini .p-pos { background: #1a8a4a; height: 100%; }
+    .progress-mini .p-neu { background: #f57c00; height: 100%; }
+    .progress-mini .p-neg { background: #c62828; height: 100%; }
+    
+    /* Gap Items */
+    .gap-item {
+        background: #f8fafc;
+        border-radius: 8px;
+        padding: 0.7rem 1rem;
+        margin-bottom: 0.5rem;
+        border-left: 3px solid #c62828;
+    }
+    
+    .gap-item .gap-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .gap-item .gap-name {
+        font-weight: 600;
+        color: #0f172a;
+        font-size: 0.85rem;
+        text-transform: capitalize;
+    }
+    
+    .gap-item .gap-badge {
+        font-size: 0.65rem;
+        padding: 2px 10px;
+        border-radius: 12px;
+        font-weight: 600;
+        background: #ffebee;
+        color: #c62828;
+    }
+    
+    .gap-item .gap-progress {
+        margin-top: 4px;
+        height: 4px;
+        border-radius: 2px;
+        background: #eef2f6;
+        overflow: hidden;
+        display: flex;
+    }
+    
+    .gap-item .gap-progress .seg-pos { background: #1a8a4a; height: 100%; }
+    .gap-item .gap-progress .seg-neu { background: #f57c00; height: 100%; }
+    .gap-item .gap-progress .seg-neg { background: #c62828; height: 100%; }
+    
+    /* ============================================
+       RECENT REVIEWS TABLE - PROFESSIONAL
+       ============================================ */
+    .reviews-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.85rem;
+    }
+    
+    .reviews-table th {
+        font-size: 0.65rem;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+        color: #94a3b8;
+        padding: 10px 12px;
+        border-bottom: 2px solid #eef2f6;
+        text-align: left;
+        font-weight: 600;
+        background: #fafbfc;
+    }
+    
+    .reviews-table td {
+        padding: 10px 12px;
+        border-bottom: 1px solid #f1f5f9;
+        vertical-align: middle;
+    }
+    
+    .reviews-table tr:hover td {
+        background: #f8fafc;
+    }
+    
+    .reviews-table .review-text-cell {
+        max-width: 300px;
+        white-space: normal;
+        word-wrap: break-word;
+        line-height: 1.4;
+        font-size: 0.85rem;
+        color: #0f172a;
+    }
+    
+    .reviews-table .review-text-cell .text-muted {
+        color: #94a3b8;
+        font-size: 0.75rem;
+    }
+    
+    .sentiment-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 3px 12px;
+        border-radius: 20px;
+        font-size: 0.7rem;
+        font-weight: 600;
+        text-transform: capitalize;
+        letter-spacing: 0.3px;
+    }
+    
+    .sentiment-badge.positive {
+        background: #e8f5e9;
+        color: #1a8a4a;
+    }
+    
+    .sentiment-badge.positive i {
+        color: #1a8a4a;
+    }
+    
+    .sentiment-badge.neutral {
+        background: #fff8e1;
+        color: #f57c00;
+    }
+    
+    .sentiment-badge.neutral i {
+        color: #f57c00;
+    }
+    
+    .sentiment-badge.negative {
+        background: #ffebee;
+        color: #c62828;
+    }
+    
+    .sentiment-badge.negative i {
+        color: #c62828;
+    }
+    
+    .reviews-table .rating-stars {
+        color: #f57c00;
+        font-size: 0.75rem;
+        white-space: nowrap;
+        letter-spacing: 1px;
+    }
+    
+    .reviews-table .platform-badge {
+        font-size: 0.6rem;
+        padding: 2px 10px;
+        border-radius: 12px;
+        background: #eef2f6;
+        color: #64748b;
+        font-weight: 500;
+        white-space: nowrap;
+    }
+    
+    .reviews-table .platform-badge.qr {
+        background: #e8f0fe;
+        color: #1a5276;
+    }
+    
+    .reviews-table .platform-badge.google {
+        background: #fce8e6;
+        color: #d93025;
+    }
+    
+    .reviews-table .platform-badge.tripadvisor {
+        background: #e8f5e9;
+        color: #1a8a4a;
+    }
+    
+    .reviews-table .platform-badge.booking {
+        background: #e3f2fd;
+        color: #0d47a1;
+    }
+    
+    .reviews-table .date-cell {
+        font-size: 0.75rem;
+        color: #64748b;
+        white-space: nowrap;
+    }
+    
+    .reviews-table .date-cell i {
+        margin-right: 3px;
+        font-size: 0.7rem;
+        color: #94a3b8;
+    }
+    
+    .reviews-table .time-cell {
+        font-size: 0.7rem;
+        color: #94a3b8;
+        white-space: nowrap;
+    }
+    
+    .reviews-table .time-cell i {
+        margin-right: 3px;
+        font-size: 0.65rem;
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 2.5rem 0;
+    }
+    
+    .empty-state .empty-icon {
+        font-size: 2.5rem;
+        color: #d1d5db;
+        margin-bottom: 0.5rem;
+    }
+    
+    .empty-state h6 {
+        color: #475569;
+        font-weight: 600;
+    }
+    
+    .empty-state p {
+        color: #94a3b8;
+        font-size: 0.85rem;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+        .reviews-table {
+            font-size: 0.75rem;
+        }
+        .reviews-table th,
+        .reviews-table td {
+            padding: 6px 8px;
+        }
+        .reviews-table .review-text-cell {
+            max-width: 150px;
+        }
+        .sentiment-badge {
+            font-size: 0.6rem;
+            padding: 2px 8px;
+        }
+    }
+    
+    @media (max-width: 576px) {
+        .reviews-table .review-text-cell {
+            max-width: 100px;
+        }
+        .reviews-table .rating-stars {
+            font-size: 0.6rem;
+        }
+        .reviews-table .platform-badge {
+            font-size: 0.5rem;
+            padding: 1px 6px;
+        }
+        .reviews-table .date-cell,
+        .reviews-table .time-cell {
+            font-size: 0.6rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-0">
+
+    <!-- ============================================ -->
+    <!-- HOTEL HEADER -->
+    <!-- ============================================ -->
+    <div class="hotel-header">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h1>
+                    <i class="fas fa-hotel"></i>
+                    {{ hotel.name }}
+                </h1>
+                <div class="hotel-meta">
+                    <span><i class="fas fa-map-marker-alt"></i> {{ hotel.region.name }}</span>
+                    <span><i class="fas fa-star highlight"></i> {{ avg_rating|floatformat:1 }} / 5.0</span>
+                    <span><i class="fas fa-comments"></i> {{ total_reviews }} reviews</span>
+                    <span class="badge bg-light text-dark">{{ hotel.get_hotel_type_display }}</span>
+                </div>
+            </div>
+            <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                <div class="hotel-actions">
+                    <a href="{% url 'core:hotel_reports' %}" class="btn btn-outline-light">
+                        <i class="fas fa-file-pdf me-1"></i> Reports
+                    </a>
+                    <a href="{% url 'core:guest_feedback_hotel' hotel.slug %}" class="btn btn-light">
+                        <i class="fas fa-qrcode me-1"></i> Feedback
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- STATISTICS CARDS -->
+    <!-- ============================================ -->
+    <div class="stat-grid">
+        <div class="stat-card">
+            <div class="stat-top">
+                <div>
+                    <div class="stat-label">Total Reviews</div>
+                    <div class="stat-number">{{ total_reviews }}</div>
+                    <div class="stat-sub">All time feedback</div>
+                </div>
+                <div class="stat-icon blue"><i class="fas fa-comments"></i></div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-top">
+                <div>
+                    <div class="stat-label">Average Rating</div>
+                    <div class="stat-number">{{ avg_rating|floatformat:1 }}</div>
+                    <div class="stat-sub">Out of 5.0</div>
+                </div>
+                <div class="stat-icon yellow"><i class="fas fa-star"></i></div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-top">
+                <div>
+                    <div class="stat-label">Positive Rate</div>
+                    <div class="stat-number">
+                        {% if total_reviews > 0 %}
+                            {{ sentiment_dist.positive|add:0|divisibleby:total_reviews|add:0|floatformat:0 }}%
+                        {% else %}
+                            0%
+                        {% endif %}
+                    </div>
+                    <div class="stat-sub">Of all reviews</div>
+                </div>
+                <div class="stat-icon green"><i class="fas fa-smile"></i></div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-top">
+                <div>
+                    <div class="stat-label">Service Gaps</div>
+                    <div class="stat-number">{{ service_gaps|length }}</div>
+                    <div class="stat-sub">Aspects needing attention</div>
+                </div>
+                <div class="stat-icon red"><i class="fas fa-exclamation-triangle"></i></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- CHART GRID -->
+    <!-- ============================================ -->
+    <div class="chart-grid">
+        <div class="chart-container">
+            <div class="chart-title">
+                <span>Sentiment Distribution</span>
+                <span class="sub">Overall guest sentiment</span>
+            </div>
+            <canvas id="sentimentDoughnutChart"></canvas>
+        </div>
+
+        <div class="chart-container">
+            <div class="chart-title">
+                <span>Weekly Review Trend</span>
+                <span class="sub">Last 7 days</span>
+            </div>
+            <canvas id="weeklyTrendChart"></canvas>
+        </div>
+
+        <div class="chart-container">
+            <div class="chart-title">
+                <span>Aspect Sentiment Breakdown</span>
+                <span class="sub">By service aspect</span>
+            </div>
+            <canvas id="aspectSentimentChart"></canvas>
+        </div>
+
+        <div class="chart-container">
+            <div class="chart-title">
+                <span>Rating Distribution</span>
+                <span class="sub">Star ratings breakdown</span>
+            </div>
+            <canvas id="ratingDistributionChart"></canvas>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- SERVICE GAPS -->
+    <!-- ============================================ -->
+    {% if service_gaps %}
+        <div class="section-card">
+            <div class="card-header-custom">
+                <h5>
+                    <i class="fas fa-exclamation-triangle text-danger"></i>
+                    Service Gaps
+                    <span class="sub">Aspects needing immediate attention</span>
+                </h5>
+                <span class="badge bg-danger">{{ service_gaps|length }}</span>
+            </div>
+            <div class="card-body-custom">
+                {% for gap in service_gaps|slice:":5" %}
+                    <div class="gap-item">
+                        <div class="gap-header">
+                            <span class="gap-name">{{ gap.aspect|cut:"_"|title }}</span>
+                            <span>
+                                <span class="gap-badge">{{ gap.negative_percentage|floatformat:0 }}% negative</span>
+                                <span class="text-muted ms-1" style="font-size:0.7rem;">{{ gap.negative_count }}/{{ gap.total_count }}</span>
+                            </span>
+                        </div>
+                        <div class="gap-progress">
+                            <div class="seg-pos" style="width: {{ gap.positive_percentage|floatformat:0 }}%;"></div>
+                            <div class="seg-neu" style="width: {{ gap.neutral_percentage|floatformat:0 }}%;"></div>
+                            <div class="seg-neg" style="width: {{ gap.negative_percentage|floatformat:0 }}%;"></div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+
+    <!-- ============================================ -->
+    <!-- ASPECT SENTIMENT TABLE -->
+    <!-- ============================================ -->
+    <div class="section-card">
+        <div class="card-header-custom">
+            <h5>
+                <i class="fas fa-list-ul text-info"></i>
+                Aspect-Based Sentiment Analysis
+                <span class="sub">Detailed breakdown by service aspect</span>
+            </h5>
+        </div>
+        <div class="card-body-custom p0">
+            <div class="table-responsive">
+                <table class="aspect-table">
+                    <thead>
+                        <tr>
+                            <th>Aspect</th>
+                            <th style="text-align:center;">Positive</th>
+                            <th style="text-align:center;">Neutral</th>
+                            <th style="text-align:center;">Negative</th>
+                            <th style="text-align:center;">Total</th>
+                            <th style="text-align:center;">Distribution</th>
+                            <th style="text-align:center;">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for aspect, sentiments in aspect_sentiments.items %}
+                            <tr>
+                                <td>
+                                    <a href="{% url 'core:hotel_aspect_detail' aspect %}" class="aspect-name">
+                                        {{ aspect|cut:"_"|title }}
+                                    </a>
+                                </td>
+                                <td style="text-align:center; color:#1a8a4a; font-weight:600;">{{ sentiments.positive }}</td>
+                                <td style="text-align:center; color:#f57c00; font-weight:600;">{{ sentiments.neutral }}</td>
+                                <td style="text-align:center; color:#c62828; font-weight:600;">{{ sentiments.negative }}</td>
+                                <td style="text-align:center; font-weight:600;">
+                                    {{ sentiments.positive|add:sentiments.neutral|add:sentiments.negative }}
+                                </td>
+                                <td style="text-align:center;">
+                                    {% with total=sentiments.positive|add:sentiments.neutral|add:sentiments.negative %}
+                                        {% if total > 0 %}
+                                            <div class="progress-mini">
+                                                <div class="p-pos" style="width: {{ sentiments.positive|add:0|divisibleby:total|add:0|floatformat:0 }}%;"></div>
+                                                <div class="p-neu" style="width: {{ sentiments.neutral|add:0|divisibleby:total|add:0|floatformat:0 }}%;"></div>
+                                                <div class="p-neg" style="width: {{ sentiments.negative|add:0|divisibleby:total|add:0|floatformat:0 }}%;"></div>
+                                            </div>
+                                        {% else %}
+                                            <span class="text-muted">—</span>
+                                        {% endif %}
+                                    {% endwith %}
+                                </td>
+                                <td style="text-align:center;">
+                                    {% with total=sentiments.positive|add:sentiments.neutral|add:sentiments.negative %}
+                                        {% if total > 0 %}
+                                            {% if sentiments.positive > sentiments.negative and sentiments.positive > sentiments.neutral %}
+                                                <span class="status-badge good">Good</span>
+                                            {% elif sentiments.negative > sentiments.positive and sentiments.negative > sentiments.neutral %}
+                                                <span class="status-badge needs-work">Needs Work</span>
+                                            {% else %}
+                                                <span class="status-badge mixed">Mixed</span>
+                                            {% endif %}
+                                        {% else %}
+                                            <span class="status-badge no-data">No Data</span>
+                                        {% endif %}
+                                    {% endwith %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- RECENT REVIEWS - CLEAN TABLE -->
+    <!-- ============================================ -->
+    <div class="section-card">
+        <div class="card-header-custom">
+            <h5>
+                <i class="fas fa-clock text-secondary"></i>
+                Recent Reviews
+                <span class="sub">Latest guest feedback</span>
+            </h5>
+            <span class="badge bg-primary">{{ recent_reviews|length }}</span>
+        </div>
+        <div class="card-body-custom p0">
+            {% if recent_reviews %}
+                <div class="table-responsive">
+                    <table class="reviews-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 5%;">#</th>
+                                <th style="width: 35%;">Review</th>
+                                <th style="width: 15%;">Sentiment</th>
+                                <th style="width: 15%;">Platform</th>
+                                <th style="width: 15%;">Date</th>
+                                <th style="width: 15%;">Time</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for review in recent_reviews|slice:":15" %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td class="review-text-cell">
+                                        "{{ review.review_text|truncatechars:120 }}"
+                                        {% if review.review_text|length > 120 %}
+                                            <span class="text-muted">...</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <span class="sentiment-badge {{ review.sentiment_overall|default:'neutral' }}">
+                                            <i class="fas fa-{% if review.sentiment_overall == 'positive' %}smile{% elif review.sentiment_overall == 'negative' %}frown{% else %}meh{% endif %}"></i>
+                                            {{ review.sentiment_overall|default:'neutral' }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="platform-badge {% if review.platform == 'QR' %}qr{% elif review.platform == 'GOOGLE' %}google{% elif review.platform == 'TRIPADVISOR' %}tripadvisor{% elif review.platform == 'BOOKING' %}booking{% endif %}">
+                                            {{ review.get_platform_display }}
+                                        </span>
+                                    </td>
+                                    <td class="date-cell">
+                                        <i class="far fa-calendar-alt"></i>
+                                        {{ review.review_date|date:"d M Y" }}
+                                    </td>
+                                    <td class="time-cell">
+                                        <i class="far fa-clock"></i>
+                                        {{ review.review_date|date:"H:i" }}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <div class="empty-icon"><i class="fas fa-inbox"></i></div>
+                    <h6>No Reviews Yet</h6>
+                    <p>Share your QR code with guests to start collecting feedback</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Get data from Django context
+    const positive = {{ sentiment_dist.positive|default:0 }};
+    const neutral = {{ sentiment_dist.neutral|default:0 }};
+    const negative = {{ sentiment_dist.negative|default:0 }};
+    
+    // ============================================
+    // Chart 1: Sentiment Doughnut
+    // ============================================
+    const ctx1 = document.getElementById('sentimentDoughnutChart');
+    if (ctx1) {
+        new Chart(ctx1, {
+            type: 'doughnut',
+            data: {
+                labels: ['Positive', 'Neutral', 'Negative'],
+                datasets: [{
+                    data: [positive, neutral, negative],
+                    backgroundColor: ['#1a8a4a', '#f57c00', '#c62828'],
+                    borderWidth: 2,
+                    borderColor: '#ffffff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                cutout: '65%',
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: { usePointStyle: true, padding: 15 }
+                    }
+                }
+            }
+        });
+    }
+    
+    // ============================================
+    // Chart 2: Weekly Trend
+    // ============================================
+    const ctx2 = document.getElementById('weeklyTrendChart');
+    if (ctx2) {
+        const weeklyData = {{ weekly_reviews|safe }};
+        new Chart(ctx2, {
+            type: 'line',
+            data: {
+                labels: weeklyData.map(d => d.date),
+                datasets: [
+                    {
+                        label: 'Reviews',
+                        data: weeklyData.map(d => d.count),
+                        borderColor: '#1a5276',
+                        backgroundColor: 'rgba(26, 82, 118, 0.08)',
+                        fill: true,
+                        tension: 0.3
+                    },
+                    {
+                        label: 'Avg Rating',
+                        data: weeklyData.map(d => d.avg_rating),
+                        borderColor: '#f57c00',
+                        borderDash: [5, 5],
+                        fill: false,
+                        tension: 0.3,
+                        yAxisID: 'y1'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: { usePointStyle: true, padding: 10 }
+                    }
+                },
+                scales: {
+                    y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.04)' } },
+                    y1: { 
+                        position: 'right',
+                        beginAtZero: true,
+                        max: 5,
+                        grid: { display: false }
+                    }
+                }
+            }
+        });
+    }
+    
+    // ============================================
+    // Chart 3: Aspect Sentiment Bar
+    // ============================================
+    const ctx3 = document.getElementById('aspectSentimentChart');
+    if (ctx3) {
+        const aspectData = {{ aspect_sentiments|safe }};
+        const aspects = Object.keys(aspectData);
+        const posData = aspects.map(a => aspectData[a].positive || 0);
+        const neuData = aspects.map(a => aspectData[a].neutral || 0);
+        const negData = aspects.map(a => aspectData[a].negative || 0);
+        const labels = aspects.map(a => a.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()));
+        
+        new Chart(ctx3, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'Positive',
+                        data: posData,
+                        backgroundColor: '#1a8a4a',
+                        borderRadius: 2
+                    },
+                    {
+                        label: 'Neutral',
+                        data: neuData,
+                        backgroundColor: '#f57c00',
+                        borderRadius: 2
+                    },
+                    {
+                        label: 'Negative',
+                        data: negData,
+                        backgroundColor: '#c62828',
+                        borderRadius: 2
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: { usePointStyle: true, padding: 10 }
+                    }
+                },
+                scales: {
+                    x: { grid: { display: false } },
+                    y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.04)' } }
+                }
+            }
+        });
+    }
+    
+    // ============================================
+    // Chart 4: Rating Distribution
+    // ============================================
+    const ctx4 = document.getElementById('ratingDistributionChart');
+    if (ctx4) {
+        const ratingData = {{ rating_distribution|default:"{}"|safe }};
+        const labels = ['1 Star', '2 Stars', '3 Stars', '4 Stars', '5 Stars'];
+        const data = [];
+        for (let i = 1; i <= 5; i++) {
+            data.push(ratingData[i.toString()] || 0);
+        }
+        
+        new Chart(ctx4, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Reviews',
+                    data: data,
+                    backgroundColor: ['#c62828', '#f57c00', '#f9a825', '#1a8a4a', '#1a8a4a'],
+                    borderRadius: 4,
+                    barPercentage: 0.6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    x: { grid: { display: false } },
+                    y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.04)' } }
+                }
+            }
+        });
+    }
+});
+</script>
+{% endblock %}
